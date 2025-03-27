@@ -1,0 +1,78 @@
+{
+    "experimentCard": {
+        "experimentInfo": {
+            "experimentId": "exp_11",
+            "experimentName": "Experiment_11",
+            "experimentStartDate": [
+                "2025-01-02T10:00:00Z"
+            ],
+            "experimentEndDate": [
+                "2025-01-02T11:15:00Z"
+            ],
+            "status": "completed",
+            "collaborators": [
+                "User_B"
+            ]
+        },
+        "intent": "Classification",
+        "constraints": [
+            {
+                "id": "Constraint30",
+                "on": "DecisionTree",
+                "isHard": true,
+                "how": "Use"
+            }
+        ],
+        "requirements": [
+            {
+                "id": "Requirement20",
+                "metric": "Precision",
+                "method": "TrainTestSplit",
+                "objective": "Maximize"
+            }
+        ],
+        "variabilityPoints": {
+            "dataSet": {
+                "id_dataset": "dataset_4",
+                "name": "AirbusDataset",
+                "zenoh_key_expr": "1237",
+                "reviewer_score": "57"
+            },
+            "model": {
+                "algorithm": "DecisionTree",
+                "parameter": "MaxDepth",
+                "parameterValue": 10
+            }
+        },
+        "evaluation": {
+            "metrics": [
+                "precision",
+                "recall",
+                "f1-score",
+                "accuracy"
+            ],
+            "runMetrics": [
+                {
+                    "metricId": "metric_1",
+                    "name": "Precision",
+                    "value": 0.78
+                },
+                {
+                    "metricId": "metric_2",
+                    "name": "Recall",
+                    "value": 0.82
+                },
+                {
+                    "metricId": "metric_3",
+                    "name": "F1-Score",
+                    "value": 0.7994999999999999
+                },
+                {
+                    "metricId": "metric_4",
+                    "name": "Accuracy",
+                    "value": 0.96
+                }
+            ]
+        }
+    }
+}

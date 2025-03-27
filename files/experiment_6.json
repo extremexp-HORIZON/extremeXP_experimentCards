@@ -1,0 +1,78 @@
+{
+    "experimentCard": {
+        "experimentInfo": {
+            "experimentId": "exp_6",
+            "experimentName": "Experiment_6",
+            "experimentStartDate": [
+                "2025-01-02T10:00:00Z"
+            ],
+            "experimentEndDate": [
+                "2025-01-02T11:15:00Z"
+            ],
+            "status": "completed",
+            "collaborators": [
+                "User_B"
+            ]
+        },
+        "intent": "Classification",
+        "constraints": [
+            {
+                "id": "Constraint18",
+                "on": "SVM",
+                "isHard": true,
+                "how": "Use"
+            }
+        ],
+        "requirements": [
+            {
+                "id": "Requirement10",
+                "metric": "Accuracy",
+                "method": "CrossValidation",
+                "objective": "Maximize"
+            }
+        ],
+        "variabilityPoints": {
+            "dataSet": {
+                "id_dataset": "dataset_3",
+                "name": "ManufacturingDataset",
+                "zenoh_key_expr": "1236",
+                "reviewer_score": "62"
+            },
+            "model": {
+                "algorithm": "SVM",
+                "parameter": "C",
+                "parameterValue": 9.01
+            }
+        },
+        "evaluation": {
+            "metrics": [
+                "precision",
+                "recall",
+                "f1-score",
+                "accuracy"
+            ],
+            "runMetrics": [
+                {
+                    "metricId": "metric_1",
+                    "name": "Precision",
+                    "value": 0.76
+                },
+                {
+                    "metricId": "metric_2",
+                    "name": "Recall",
+                    "value": 0.85
+                },
+                {
+                    "metricId": "metric_3",
+                    "name": "F1-Score",
+                    "value": 0.8024844720496895
+                },
+                {
+                    "metricId": "metric_4",
+                    "name": "Accuracy",
+                    "value": 0.9
+                }
+            ]
+        }
+    }
+}

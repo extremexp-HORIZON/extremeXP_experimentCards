@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  flask-app:
+    build: .
+    ports:
+      - "5002:5002"
+    volumes:
+      - .:/app
+    environment:
+      FLASK_ENV: development
+    networks:
+      - app_network
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: experiment_db
+    ports:
+      - "5432:5432"  
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro  
+    networks:
+      - app_network
+
+
+volumes:
+  postgres_data:
+
+networks:
+  app_network:

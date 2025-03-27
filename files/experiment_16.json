@@ -1,0 +1,78 @@
+{
+    "experimentCard": {
+        "experimentInfo": {
+            "experimentId": "exp_16",
+            "experimentName": "Experiment_16",
+            "experimentStartDate": [
+                "2025-01-02T10:00:00Z"
+            ],
+            "experimentEndDate": [
+                "2025-01-02T11:15:00Z"
+            ],
+            "status": "completed",
+            "collaborators": [
+                "User_B"
+            ]
+        },
+        "intent": "Regression",
+        "constraints": [
+            {
+                "id": "Constraint22",
+                "on": "RNN",
+                "isHard": false,
+                "how": "Use"
+            }
+        ],
+        "requirements": [
+            {
+                "id": "Requirement15",
+                "metric": "MSE",
+                "method": "TrainTestSplit",
+                "objective": "Minimize"
+            }
+        ],
+        "variabilityPoints": {
+            "dataSet": {
+                "id_dataset": "dataset_1",
+                "name": "MOBI",
+                "zenoh_key_expr": "1234",
+                "reviewer_score": "68"
+            },
+            "model": {
+                "algorithm": "RNN",
+                "parameter": "Learning Rate",
+                "parameterValue": 0.00258
+            }
+        },
+        "evaluation": {
+            "metrics": [
+                "mse",
+                "rmse",
+                "r-squared",
+                "mae"
+            ],
+            "runMetrics": [
+                {
+                    "metricId": "metric_1",
+                    "name": "MSE",
+                    "value": 0.02028
+                },
+                {
+                    "metricId": "metric_2",
+                    "name": "RMSE",
+                    "value": 0.14241
+                },
+                {
+                    "metricId": "metric_3",
+                    "name": "R-Squared",
+                    "value": 0.95
+                },
+                {
+                    "metricId": "metric_4",
+                    "name": "MAE",
+                    "value": 0.02961
+                }
+            ]
+        }
+    }
+}
