@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, url_for, render_template
 import requests
 import json
+import psycopg2
 
 app = Flask(__name__)
 ACCESS_TOKEN = "af880f22386d22f93e67a890bab7ebf2613b60e6"
@@ -55,6 +56,48 @@ def submit_form():
         return redirect(url_for("message_page", status="error", msg="Failed to insert metrics."))
 
     return redirect(url_for("message_page", status="success", msg="Metrics successfully inserted!"))
+
+def get_db_connection():
+    conn = psycopg2.connect(
+        dbname="experiment_db",
+        user="user",
+        password="password",
+        host="172.17.0.0",
+        port="5433"
+    )
+    return conn
+
+@app.route('/experiment_query', methods=['GET', 'POST'])
+def index():
+    filters = {}
+    results = []
+
+    if request.method == 'POST':
+        # Get filter values from the form
+        experiment_name = request.form.get('experiment_name')
+        status = request.form.get('status')
+
+        # Build the query dynamically based on filters
+        query = "SELECT * FROM experiment_info WHERE 1=1"
+        params = []
+
+        if experiment_name:
+            query += " AND experiment_name ILIKE %s"
+            params.append(f"%{experiment_name}%")
+        
+        if status:
+            query += " AND status = %s"
+            params.append(status)
+
+        # Execute the query
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+    return render_template('query_form.html', results=results, filters=filters)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002)

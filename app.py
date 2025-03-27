@@ -15,5 +15,8 @@ def query():
     query_text = request.form.get('query')
     return f"You searched for: {query_text}"
 app.register_blueprint(form_app)
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
