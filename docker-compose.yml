@@ -6,9 +6,9 @@ services:
     ports:
       - "5002:5002"
     volumes:
-      - .:/app
+      - .:/app  
     environment:
-      FLASK_ENV: development
+      FLASK_ENV: development 
     networks:
       - app_network
 
