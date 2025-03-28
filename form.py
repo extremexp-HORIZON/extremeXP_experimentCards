@@ -115,6 +115,8 @@ def query_example():
         # Get filter values from the form
         experiment_name = request.form.get('experiment_name')
         intent = request.form.get('intent')
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
 
         # Add filters to the query
         if experiment_name:
@@ -123,6 +125,12 @@ def query_example():
         if intent:
             query += " AND intent = %s"
             params.append(intent)
+        if start_date:
+            query += " AND DATE(experiment_start_time) = %s"
+            params.append(start_date)
+        if end_date:
+            query += " AND DATE(experiment_end_time) = %s"
+            params.append(end_date)
 
     # Execute the query
     conn = get_db_connection()

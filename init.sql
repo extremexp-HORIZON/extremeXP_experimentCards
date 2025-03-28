@@ -4,7 +4,7 @@ CREATE TABLE experiment_cards_example (
     experiment_name VARCHAR(255) NOT NULL,
     experiment_start_time TIMESTAMP NOT NULL,
     experiment_end_time TIMESTAMP NOT NULL,
-    collaborators TEXT NOT NULL,
+    collaborators VARCHAR(255) NOT NULL,
     intent VARCHAR(50) NOT NULL CHECK (intent IN ('classification', 'regression', 'clustering'))
 );
 
