@@ -6,28 +6,12 @@ This project is a Flask-based web application that provides a query form for col
 ## Installation
 
 1. Clone the repository:
-    ```bash
-    git clone https://github.com/your-username/flask-template.git
-    cd flask-template
-    ```
 
-2. Create and activate a virtual environment:
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate  
-    ```
-
-3. Install dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. Run the application:
-    ```bash
-    flask run
-    ```
-
-5. Open your browser and navigate to `http://127.0.0.1:5002`.
+2. Create the docker containers:
+```
+docker compose up -d
+```
+3. Open your browser and navigate to `http://localhost:5002/query_example`.
 
 ## Usage
 
@@ -38,13 +22,11 @@ This project is a Flask-based web application that provides a query form for col
 ## Folder Structure
 
 ```
-flask-template/
-├── app/
-│   ├── static/
-│   ├── templates/
-│   ├── __init__.py
-│   ├── app.py
-├── venv/
+├── static
+├── files
+├── templates
+├── tests
+├── form.py
 ├── requirements.txt
 ├── README.md
 ```
