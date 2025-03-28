@@ -1,3 +1,22 @@
+-- Create the experiment_cards_example table
+CREATE TABLE experiment_cards_example (
+    experiment_id SERIAL PRIMARY KEY,
+    experiment_name VARCHAR(255) NOT NULL,
+    experiment_start_time TIMESTAMP NOT NULL,
+    experiment_end_time TIMESTAMP NOT NULL,
+    collaborators TEXT NOT NULL,
+    intent VARCHAR(50) NOT NULL CHECK (intent IN ('classification', 'regression', 'clustering'))
+);
+
+-- Insert mock data into experiment_cards_example
+INSERT INTO experiment_cards_example (experiment_name, experiment_start_time, experiment_end_time, collaborators, intent)
+VALUES
+('Experiment 1', '2025-01-01 10:00:00', '2025-01-10 11:00:00', 'Alice Johnson', 'classification'),
+('Experiment 2', '2025-02-01 09:00:00', '2025-02-15 09:01:00', 'Diana Prince', 'regression'),
+('Experiment 3', '2025-03-01 08:30:00', '2025-03-20 16:30:00',  'Frank White', 'clustering'),
+('Experiment 4', '2025-04-01 11:00:00', '2025-04-10 15:00:00', 'Hank Green', 'classification'),
+('Experiment 5', '2025-05-01 14:00:00', '2025-05-20 19:00:00', 'Jack Black', 'regression');
+
 CREATE TABLE experiment (
     experiment_id VARCHAR PRIMARY KEY,
     constraints_id VARCHAR,

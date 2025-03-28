@@ -62,8 +62,8 @@ def get_db_connection():
         dbname="experiment_db",
         user="user",
         password="password",
-        host="172.17.0.0",
-        port="5433"
+        host="postgres",
+        port="5432"
     )
     return conn
 
@@ -98,6 +98,41 @@ def index():
         conn.close()
 
     return render_template('query_form.html', results=results, filters=filters)
+
+
+
+@app.route('/query_example', methods=['GET', 'POST'])
+def query_example():
+    results = []
+    query = """
+        SELECT experiment_id, experiment_name, experiment_start_time, experiment_end_time, collaborators, intent
+        FROM experiment_cards_example
+        WHERE 1=1
+    """
+    params = []
+
+    if request.method == 'POST':
+        # Get filter values from the form
+        experiment_name = request.form.get('experiment_name')
+        intent = request.form.get('intent')
+
+        # Add filters to the query
+        if experiment_name:
+            query += " AND experiment_name ILIKE %s"
+            params.append(f"%{experiment_name}%")
+        if intent:
+            query += " AND intent = %s"
+            params.append(intent)
+
+    # Execute the query
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(query, params)
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('form_example.html', results=results)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002)

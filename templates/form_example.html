@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Example</title>
+</head>
+<body>
+    <h1>Experiment Cards Example</h1>
+    <form method="POST">
+        <label for="experiment_name">Experiment Name:</label>
+        <input type="text" id="experiment_name" name="experiment_name" placeholder="Enter experiment name">
+        <br><br>
+        <label for="intent">Intent:</label>
+        <select id="intent" name="intent">
+            <option value="">--Select Intent--</option>
+            <option value="classification">Classification</option>
+            <option value="regression">Regression</option>
+            <option value="clustering">Clustering</option>
+        </select>
+        <br><br>
+        <button type="submit">Filter</button>
+    </form>
+    <br>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Experiment ID</th>
+                <th>Experiment Name</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Collaborators</th>
+                <th>Intent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if results %}
+                {% for row in results %}
+                    <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[2] }}</td>
+                        <td>{{ row[3] }}</td>
+                        <td>{{ row[4] | join(', ') }}</td>
+                        <td>{{ row[5] }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6">No results found</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</body>
+</html>
