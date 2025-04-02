@@ -174,14 +174,14 @@ INSERT INTO experiment_info (experiment_info_id, experiment_name, experiment_sta
 VALUES
 ('exp_info_1', 'Experiment_1', '2025-01-02 10:00:00', '2025-01-02 11:15:00', 'completed', 'classification', 'User_B'),
 ('exp_info_2', 'Experiment_2', '2025-02-01 09:00:00', '2025-02-15 09:01:00', 'ongoing', 'classification', 'User_C'),
-('exp_info_3', 'Experiment_3', '2025-03-01 08:30:00', '2025-03-20 16:30:00', 'completed', 'regression', 'User_D'),
-('exp_info_4', 'Experiment_4', '2025-04-01 11:00:00', '2025-04-10 15:00:00', 'failed', 'clustering', 'User_E'),
-('exp_info_5', 'Experiment_5', '2025-05-01 14:00:00', '2025-05-20 19:00:00', 'completed', 'classification', 'User_F'),
-('exp_info_6', 'Experiment_6', '2025-06-01 10:00:00', '2025-06-15 12:00:00', 'ongoing', 'regression','User_G'),
-('exp_info_7', 'Experiment_7', '2025-07-01 09:00:00', '2025-07-10 11:00:00', 'completed', 'clustering', 'User_H'),
-('exp_info_8', 'Experiment_8', '2025-08-01 08:00:00', '2025-08-20 10:00:00', 'failed', 'clustering', 'User_I'),
+('exp_info_3', 'Experiment_3', '2025-03-01 08:30:00', '2025-03-20 16:30:00', 'completed', 'classification', 'User_D'),
+('exp_info_4', 'Experiment_4', '2025-04-01 11:00:00', '2025-04-10 15:00:00', 'failed', 'regression', 'User_E'),
+('exp_info_5', 'Experiment_5', '2025-05-01 14:00:00', '2025-05-20 19:00:00', 'completed', 'regression', 'User_F'),
+('exp_info_6', 'Experiment_6', '2025-06-01 10:00:00', '2025-06-15 12:00:00', 'ongoing', 'clustering','User_G'),
+('exp_info_7', 'Experiment_7', '2025-07-01 09:00:00', '2025-07-10 11:00:00', 'completed', 'classification', 'User_H'),
+('exp_info_8', 'Experiment_8', '2025-08-01 08:00:00', '2025-08-20 10:00:00', 'failed', 'classification', 'User_I'),
 ('exp_info_9', 'Experiment_9', '2025-09-01 07:00:00', '2025-09-15 09:00:00', 'completed', 'regression','User_J'),
-('exp_info_10', 'Experiment_10', '2025-10-01 06:00:00', '2025-10-20 08:00:00', 'ongoing', 'regression','User_K');
+('exp_info_10', 'Experiment_10', '2025-10-01 06:00:00', '2025-10-20 08:00:00', 'ongoing', 'classification','User_K');
 
 -- Insert mock data into the experiment table
 INSERT INTO experiment (experiment_id, experiment_info_id, constraints_id, requirements_id, variability_points_id, evaluation_metrics_id)
