@@ -9,15 +9,23 @@ This project is a Flask-based web application that provides a query form for col
 
 2. Create the docker containers:
 ```
-docker compose up -d
+docker compose up --build -d
 ```
-3. Open your browser and navigate to `http://localhost:5002/query_example`.
+3. Open your browser and navigate to `http://localhost:5002/query_example_new`.
 
 ## Usage
 
 1. Access the query form through the web interface.
-2. Fill in the required fields related to the experiment cards.
-3. Submit the form to save the data.
+2. Fill in the fields based on which you would like to perform the filtering.
+3. Click on "filter" to show only the respective fields.
+
+## Feedback Form
+
+1. Open your browser and navigate to `http://localhost:5002/`
+2. Access the query form through the web interface.
+2. Fill in the fields regarding the user feedback.
+3. Click on "submit" to insert these fields as metrics linked with the respective experiment in the DAL.
+
 
 ## Folder Structure
 
