@@ -100,7 +100,6 @@ def index():
     return render_template('query_form.html', results=results, filters=filters)
 
 
-
 @app.route('/query_example', methods=['GET', 'POST'])
 def query_example():
     results = []
@@ -141,6 +140,68 @@ def query_example():
     conn.close()
 
     return render_template('form_example.html', results=results)
+
+@app.route('/query_example_new', methods=['GET', 'POST'])
+def query_example_new():
+    results = []
+    query = """
+        SELECT 
+            ei.experiment_info_id AS experiment_id, 
+            ei.experiment_name, 
+            ei.experiment_start_date AS experiment_start_time, 
+            ei.experiment_end_date AS experiment_end_time, 
+            ei.collaborators, 
+            ei.intent,  -- Corrected: intent is now referenced from experiment_info (ei)
+            m.algorithm, 
+            em.name AS metric_name, 
+            em.value AS metric_value
+        FROM experiment_info ei
+        LEFT JOIN experiment e ON e.experiment_info_id = ei.experiment_info_id
+        LEFT JOIN variability_points vp ON vp.variability_points_id = ANY(e.variability_points_id)
+        LEFT JOIN model m ON m.model_id = vp.model_id
+        LEFT JOIN evaluation_metrics em ON em.metric_id = ANY(e.evaluation_metrics_id)
+        WHERE 1=1
+    """
+    params = []
+
+    if request.method == 'POST':
+        # Get filter values from the form
+        experiment_name = request.form.get('experiment_name')
+        intent = request.form.get('intent')
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        algorithm = request.form.get('algorithm')
+        metric_name = request.form.get('metric_name')
+
+        # Add filters to the query
+        if experiment_name:
+            query += " AND ei.experiment_name ILIKE %s"
+            params.append(f"%{experiment_name}%")
+        if intent:
+            query += " AND ei.intent = %s"  
+            params.append(intent)
+        if start_date:
+            query += " AND DATE(ei.experiment_start_date) = %s"
+            params.append(start_date)
+        if end_date:
+            query += " AND DATE(ei.experiment_end_date) = %s"
+            params.append(end_date)
+        if algorithm:
+            query += " AND m.algorithm ILIKE %s"
+            params.append(f"%{algorithm}%")
+        if metric_name:
+            query += " AND em.name ILIKE %s"
+            params.append(f"%{metric_name}%")
+
+    # Execute the query
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(query, params)
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('form_example_new.html', results=results)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002)
