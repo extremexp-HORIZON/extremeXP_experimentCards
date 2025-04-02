@@ -151,15 +151,18 @@ def query_example_new():
             ei.experiment_start_date AS experiment_start_time, 
             ei.experiment_end_date AS experiment_end_time, 
             ei.collaborators, 
-            ei.intent,  -- Corrected: intent is now referenced from experiment_info (ei)
+            ei.intent,  
             m.algorithm, 
             em.name AS metric_name, 
-            em.value AS metric_value
+            em.value AS metric_value,
+            ll.lessons_learnt AS lessons_learnt,
+            ll.experimentRating AS experimentRating
         FROM experiment_info ei
         LEFT JOIN experiment e ON e.experiment_info_id = ei.experiment_info_id
         LEFT JOIN variability_points vp ON vp.variability_points_id = ANY(e.variability_points_id)
         LEFT JOIN model m ON m.model_id = vp.model_id
         LEFT JOIN evaluation_metrics em ON em.metric_id = ANY(e.evaluation_metrics_id)
+        LEFT JOIN lessons_learnt ll ON ll.lessons_learnt_id = e.lessons_learnt_id
         WHERE 1=1
     """
     params = []
@@ -172,6 +175,7 @@ def query_example_new():
         end_date = request.form.get('end_date')
         algorithm = request.form.get('algorithm')
         metric_name = request.form.get('metric_name')
+
 
         # Add filters to the query
         if experiment_name:

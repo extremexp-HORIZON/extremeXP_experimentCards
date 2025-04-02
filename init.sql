@@ -75,6 +75,14 @@ CREATE TABLE evaluation_metrics (
     value VARCHAR
 );
 
+-- Create the lessons_learnt table
+CREATE TABLE lessons_learnt (
+    lessons_learnt_id VARCHAR PRIMARY KEY,
+    lessons_learnt VARCHAR,
+    experimentRating INT CHECK (experimentRating BETWEEN 1 AND 7),
+    runRating INT[]
+);
+
 -- Create the experiment table
 CREATE TABLE experiment (
     experiment_id VARCHAR PRIMARY KEY,
@@ -82,7 +90,8 @@ CREATE TABLE experiment (
     constraints_id VARCHAR[], 
     requirements_id VARCHAR[],
     variability_points_id VARCHAR[],
-    evaluation_metrics_id VARCHAR[]
+    evaluation_metrics_id VARCHAR[],
+    lessons_learnt_id VARCHAR
 );
 
 -- Insert mock data into the dataset table
@@ -169,6 +178,21 @@ VALUES
 ('metric_9', 'ROC-AUC', '0.94'),
 ('metric_10', 'Log-Loss', '0.05');
 
+-- Insert mock data into the lessons_learnt table
+INSERT INTO lessons_learnt (lessons_learnt_id, lessons_learnt, experimentRating, runRating)
+VALUES
+('lessons_learnt_1', 'Lessons Learnt 1 text', 5, ARRAY[1, 2, 3, 4]),
+('lessons_learnt_2', 'Lessons Learnt 2 text', 6, ARRAY[6]),
+('lessons_learnt_3', 'Lessons Learnt 3 text', 4, ARRAY[4]),
+('lessons_learnt_4', 'Lessons Learnt 4 text', 7, ARRAY[7]),
+('lessons_learnt_5', 'Lessons Learnt 5 text', 3, ARRAY[ 3]),
+('lessons_learnt_6', 'Lessons Learnt 6 text', 5, ARRAY[ 5]),
+('lessons_learnt_7', 'Lessons Learnt 7 text', 2, ARRAY[2]),
+('lessons_learnt_8', 'Lessons Learnt 8 text', 1, ARRAY[1]),
+('lessons_learnt_9', 'Lessons Learnt 9 text', 6, ARRAY[ 6]),
+('lessons_learnt_10', 'Lessons Learnt 10 text', 7, ARRAY[ 7]);
+
+
 -- Insert mock data into the experiment_info table
 INSERT INTO experiment_info (experiment_info_id, experiment_name, experiment_start_date, experiment_end_date, status, intent, collaborators)
 VALUES
@@ -184,15 +208,15 @@ VALUES
 ('exp_info_10', 'Experiment_10', '2025-10-01 06:00:00', '2025-10-20 08:00:00', 'ongoing', 'classification','User_K');
 
 -- Insert mock data into the experiment table
-INSERT INTO experiment (experiment_id, experiment_info_id, constraints_id, requirements_id, variability_points_id, evaluation_metrics_id)
+INSERT INTO experiment (experiment_id, experiment_info_id, constraints_id, requirements_id, variability_points_id, evaluation_metrics_id, lessons_learnt_id)
 VALUES
-('exp_1', 'exp_info_1', ARRAY['Constraint1'], ARRAY['Requirement1'], ARRAY['vp_1'], ARRAY['metric_1', 'metric_2', 'metric_3', 'metric_4']),
-('exp_2', 'exp_info_2', ARRAY['Constraint2'], ARRAY['Requirement2'], ARRAY['vp_2'], ARRAY['metric_5']),
-('exp_3', 'exp_info_3', ARRAY['Constraint3'], ARRAY['Requirement3'], ARRAY['vp_3'], ARRAY['metric_6']),
-('exp_4', 'exp_info_4', ARRAY['Constraint4'], ARRAY['Requirement4'], ARRAY['vp_4'], ARRAY['metric_7']),
-('exp_5', 'exp_info_5', ARRAY['Constraint5'], ARRAY['Requirement5'], ARRAY['vp_5'], ARRAY['metric_8']),
-('exp_6', 'exp_info_6', ARRAY['Constraint6'], ARRAY['Requirement6'], ARRAY['vp_6'], ARRAY['metric_9']),
-('exp_7', 'exp_info_7', ARRAY['Constraint7'], ARRAY['Requirement7'], ARRAY['vp_7'], ARRAY['metric_10']),
-('exp_8', 'exp_info_8', ARRAY['Constraint8'], ARRAY['Requirement8'], ARRAY['vp_8'], ARRAY['metric_1']),
-('exp_9', 'exp_info_9', ARRAY['Constraint9'], ARRAY['Requirement9'], ARRAY['vp_9'], ARRAY['metric_2']),
-('exp_10', 'exp_info_10', ARRAY['Constraint10'], ARRAY['Requirement10'], ARRAY['vp_10'], ARRAY['metric_3']);
+('exp_1', 'exp_info_1', ARRAY['Constraint1'], ARRAY['Requirement1'], ARRAY['vp_1'], ARRAY['metric_1', 'metric_2', 'metric_3', 'metric_4'], 'lessons_learnt_1'),
+('exp_2', 'exp_info_2', ARRAY['Constraint2'], ARRAY['Requirement2'], ARRAY['vp_2'], ARRAY['metric_5'], 'lessons_learnt_2'),
+('exp_3', 'exp_info_3', ARRAY['Constraint3'], ARRAY['Requirement3'], ARRAY['vp_3'], ARRAY['metric_6'], 'lessons_learnt_3'),
+('exp_4', 'exp_info_4', ARRAY['Constraint4'], ARRAY['Requirement4'], ARRAY['vp_4'], ARRAY['metric_7'], 'lessons_learnt_4'),
+('exp_5', 'exp_info_5', ARRAY['Constraint5'], ARRAY['Requirement5'], ARRAY['vp_5'], ARRAY['metric_8'], 'lessons_learnt_5'),
+('exp_6', 'exp_info_6', ARRAY['Constraint6'], ARRAY['Requirement6'], ARRAY['vp_6'], ARRAY['metric_9'], 'lessons_learnt_6'),
+('exp_7', 'exp_info_7', ARRAY['Constraint7'], ARRAY['Requirement7'], ARRAY['vp_7'], ARRAY['metric_10'],'lessons_learnt_7'),
+('exp_8', 'exp_info_8', ARRAY['Constraint8'], ARRAY['Requirement8'], ARRAY['vp_8'], ARRAY['metric_1'], 'lessons_learnt_8'),
+('exp_9', 'exp_info_9', ARRAY['Constraint9'], ARRAY['Requirement9'], ARRAY['vp_9'], ARRAY['metric_2'], 'lessons_learnt_9'),
+('exp_10', 'exp_info_10', ARRAY['Constraint10'], ARRAY['Requirement10'], ARRAY['vp_10'], ARRAY['metric_3'], 'lessons_learnt_10');
