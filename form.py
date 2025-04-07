@@ -1,12 +1,29 @@
-from flask import Flask, request, redirect, url_for, render_template
-import requests
-import json
-import psycopg2
+from flask import Flask, jsonify, render_template, request
+from flask_sqlalchemy import SQLAlchemy
+from app.models import db, Experiment
+from app.config import Config
+from app.ingest import load_and_insert
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
+        try:
+            load_and_insert(db)
+            print("Database populated successfully!")
+        except Exception as e:
+            print(f"Error populating database: {str(e)}")
+    return app
+app = create_app()
+
+
 ACCESS_TOKEN = "af880f22386d22f93e67a890bab7ebf2613b60e6"
 EXPERIMENT_ID = "jZa-mJQBZTyxy1ACX1W8"
 BASE_URL = "https://api.expvis.smartarch.cz/api"
+
 
 def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", parent_type="experiment"):
     headers = {"access-token": ACCESS_TOKEN, "Content-Type": "application/json"}
@@ -25,6 +42,16 @@ def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", 
 @app.route("/", methods=["GET"])
 def form():
     return render_template("form.html")
+
+
+
+@app.route('/experiments', methods=['GET'])
+def list_experiments():
+    experiments = Experiment.query.all()
+    return jsonify([{
+        "experiment_id": e.experiment_id,
+        "experiment_name": e.experiment_name
+    } for e in experiments])
 
 @app.route("/message")
 def message_page():
@@ -208,4 +235,5 @@ def query_example_new():
     return render_template('form_example_new.html', results=results)
 
 if __name__ == '__main__':
+    
     app.run(host='0.0.0.0', port=5002)

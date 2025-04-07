@@ -1,6 +1,21 @@
 version: '3.8'
 
+
 services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: experiments
+    ports:
+      - "5433:5432"  
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
   flask-app:
     build: .
     ports:
@@ -9,25 +24,11 @@ services:
       - .:/app  
     environment:
       FLASK_ENV: development 
+       - DATABASE_URL=postgresql://user:password@postgres:5432/experiments
+    depends_on:
+      - postgres
     networks:
       - app_network
-
-  postgres:
-    image: postgres:latest
-    container_name: postgres-container
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: experiment_db
-    ports:
-      - "5433:5432"  
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  
-
-    networks:
-      - app_network
-
 
 volumes:
   postgres_data:
