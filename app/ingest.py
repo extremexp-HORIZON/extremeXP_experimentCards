@@ -1,6 +1,7 @@
 import os
 import json
-from .models import Experiment, ExperimentConstraint, ExperimentRequirement, ExperimentDataset, ExperimentModel, EvaluationMetric
+from .models import Experiment, ExperimentConstraint, ExperimentRequirement, ExperimentDataset, ExperimentModel, EvaluationMetric, LessonLearnt
+import random
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'files')
 
@@ -20,72 +21,76 @@ def load_and_insert(db):
                         experiment_start=exp_info["experimentStartDate"][0],
                         experiment_end=exp_info["experimentEndDate"][0],
                         status=exp_info["status"],
-                        collaborators=exp_info.get("collaborators", [])
+                        collaborators=exp_info.get("collaborators", []),
+                        intent = card["intent"]
                     )
                     db.session.add(experiment)
                     print(experiment)
 
-                    # # Constraints
-                    # for c in card.get("constraints", []):
-                    #     db.session.add(ExperimentConstraint(
-                    #         id=c["id"],
-                    #         on_component=c["on"],
-                    #         is_hard=c["isHard"],
-                    #         how=c["how"],
-                    #         experiment=experiment
-                    #     ))
-                    from sqlalchemy.dialects.postgresql import insert
-
+                    # Constraints
                     for c in card.get("constraints", []):
-                        stmt = insert(ExperimentConstraint).values(id=c["id"], on_component=c["on"], is_hard=c["isHard"], how=c["how"], experiment_id=experiment.experiment_id
-                                                                   ).on_conflict_do_update(
-                                                                         index_elements=['id'],  # Primary key column
-                                                                         set_={"on_component": c["on"], "is_hard": c["isHard"], "how": c["how"] })
-                        db.session.execute(stmt)
+                        db.session.add(ExperimentConstraint(
+                            id=c["id"],
+                            on_component=c["on"],
+                            is_hard=c["isHard"],
+                            how=c["how"],
+                            experiment=experiment
+                        ))
+                  
 
-                    # # Requirements
-                    # for r in card.get("requirements", []):
-                    #     db.session.add(ExperimentRequirement(
-                    #         id=r["id"],
-                    #         metric=r["metric"],
-                    #         method=r["method"],
-                    #         objective=r["objective"],
-                    #         experiment=experiment
-                    #     ))
-                    #     db.session.execute(stmt)
+                    # Requirements
+                    for r in card.get("requirements", []):
+                        db.session.add(ExperimentRequirement(
+                            id=r["id"],
+                            metric=r["metric"],
+                            method=r["method"],
+                            objective=r["objective"],
+                            experiment=experiment
+                        ))
                    
-                    # # Variability - Dataset
-                    # if "dataSet" in card.get("variabilityPoints", {}):
-                    #     d = card["variabilityPoints"]["dataSet"]
-                    #     db.session.add(ExperimentDataset(
-                    #         id_dataset=d["id_dataset"],
-                    #         name=d["name"],
-                    #         zenoh_key_expr=d["zenoh_key_expr"],
-                    #         reviewer_score=int(d["reviewer_score"]),
-                    #         experiment=experiment
-                    #     ))
+                   
+                    # Variability - Dataset
+                    if "dataSet" in card.get("variabilityPoints", {}):
+                        d = card["variabilityPoints"]["dataSet"]
+                        db.session.add(ExperimentDataset(
+                            id_dataset=d["id_dataset"],
+                            name=d["name"],
+                            zenoh_key_expr=d["zenoh_key_expr"],
+                            reviewer_score=int(d["reviewer_score"]),
+                            experiment=experiment
+                        ))
 
-                    # # Variability - Model
-                    # if "model" in card.get("variabilityPoints", {}):
-                    #     m = card["variabilityPoints"]["model"]
-                    #     db.session.add(ExperimentModel(
-                    #         algorithm=m["algorithm"],
-                    #         parameter=m["parameter"],
-                    #         parameter_value=float(m["parameterValue"]),
-                    #         experiment=experiment
-                    #     ))
+                    # Variability - Model
+                    if "model" in card.get("variabilityPoints", {}):
+                        m = card["variabilityPoints"]["model"]
+                        db.session.add(ExperimentModel(
+                            algorithm=m["algorithm"],
+                            parameter=m["parameter"],
+                            parameter_value=float(m["parameterValue"]),
+                            experiment=experiment
+                        ))
 
-    #                 for em in card["evaluation"].get("runMetrics", []):
-    # existing_metric = EvaluationMetric.query.filter_by(metric_id=em["metricId"]).first()
-    # if existing_metric:
-    #     existing_metric.name = em["name"]
-    #     existing_metric.value = float(em["value"])
-    # else:
-    #     db.session.add(EvaluationMetric(
-    #         metric_id=em["metricId"],
-    #         name=em["name"],
-    #         value=float(em["value"]),
-    #         experiment=experiment
-    #     ))
+                    for em in card["evaluation"].get("runMetrics", []):
+                        db.session.add(EvaluationMetric(
+                            metric_id=em["metricId"],
+                            experiment_id=experiment.experiment_id,
+                            name=em["name"],
+                            value=em["value"],
+                        ))
+        for i in range(1, 21):
+            exp_id = f"exp_{i}"
+            lesson_id = f"lessons_learnt_{i}"
+            lesson_text = f"Lessons Learnt {i} text"
+            rating = random.randint(1, 7)
+            run_ratings = [random.randint(1, 10) for _ in range(random.randint(1, 4))]
+
+            db.session.add(LessonLearnt(
+                lessons_learnt_id=lesson_id,
+                lessons_learnt=lesson_text,
+                experiment_rating=rating,
+                run_rating=run_ratings,
+                experiment_id=exp_id
+            ))
+        
 
         db.session.commit()

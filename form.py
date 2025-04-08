@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, render_template, request
-from flask_sqlalchemy import SQLAlchemy
-from app.models import db, Experiment
+from app.models import db, Experiment,ExperimentRequirement, ExperimentModel, EvaluationMetric, LessonLearnt
 from app.config import Config
 from app.ingest import load_and_insert
+from itertools import groupby
+from operator import itemgetter
+from sqlalchemy.sql import func
 
 def create_app():
     app = Flask(__name__)
@@ -50,7 +52,9 @@ def list_experiments():
     experiments = Experiment.query.all()
     return jsonify([{
         "experiment_id": e.experiment_id,
-        "experiment_name": e.experiment_name
+        "experiment_name": e.experiment_name,
+        "lessons_learnt": [lesson.lessons_learnt for lesson in e.lessons],
+        "experimentRatings": [lesson.experiment_rating for lesson in e.lessons],
     } for e in experiments])
 
 @app.route("/message")
@@ -234,6 +238,93 @@ def query_example_new():
 
     return render_template('form_example_new.html', results=results)
 
+@app.route('/query_example_new_sqlalchemy', methods=['GET', 'POST'])
+def query_example_new_sqlalchemy():
+    results = []
+    filters = {}
+
+    if request.method == 'POST':
+        # Get filter values from the form
+        experiment_name = request.form.get('experiment_name')
+        intent = request.form.get('intent')
+        print("Intent Filter Value:", intent)  # Debugging: Check the value of intent
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        algorithm = request.form.get('algorithm')
+        metric_name = request.form.get('metric_name')
+
+        # Build the query dynamically using SQLAlchemy
+        query = db.session.query(
+            Experiment.experiment_id,
+            Experiment.experiment_name,
+            Experiment.experiment_start,
+            Experiment.experiment_end,
+            Experiment.collaborators,
+            Experiment.status,
+            Experiment.intent,
+            ExperimentRequirement.metric,
+            ExperimentModel.algorithm,
+            EvaluationMetric.name.label("metric_name"),
+            EvaluationMetric.value.label("metric_value"),
+            LessonLearnt.lessons_learnt,
+            LessonLearnt.experiment_rating
+        ).join(
+            LessonLearnt, Experiment.experiment_id == LessonLearnt.experiment_id, isouter=True
+        ).join(
+            ExperimentModel, Experiment.experiment_id == ExperimentModel.experiment_id, isouter=True
+        ).join(
+            EvaluationMetric, Experiment.experiment_id == EvaluationMetric.experiment_id, isouter=True
+        ).join(
+            ExperimentRequirement, Experiment.experiment_id == ExperimentRequirement.experiment_id, isouter=True
+        )
+
+        # Apply filters dynamically
+        if experiment_name:
+            query = query.filter(Experiment.experiment_name.ilike(f"%{experiment_name}%"))
+        if intent:
+            query = query.filter(func.lower(Experiment.intent) == intent.lower())
+        if start_date:
+            query = query.filter(func.date(Experiment.experiment_start) == start_date)
+        if end_date:
+            query = query.filter(func.date(Experiment.experiment_end) == end_date)
+        if algorithm:
+            query = query.filter(ExperimentModel.algorithm.ilike(f"%{algorithm}%"))
+        if metric_name:
+            query = query.filter(EvaluationMetric.name.ilike(f"%{metric_name}%"))
+
+        # Execute the query
+        results = query.all()
+    else:
+        # Default behavior for GET: Fetch all experiments
+        results = db.session.query(
+            Experiment.experiment_id,
+            Experiment.experiment_name,
+            Experiment.experiment_start,
+            Experiment.experiment_end,
+            Experiment.collaborators,
+            Experiment.status,
+            Experiment.intent,
+            ExperimentRequirement.metric,
+            ExperimentModel.algorithm,
+            EvaluationMetric.name.label("metric_name"),
+            EvaluationMetric.value.label("metric_value"),
+            LessonLearnt.lessons_learnt,
+            LessonLearnt.experiment_rating
+        ).join(
+            LessonLearnt, Experiment.experiment_id == LessonLearnt.experiment_id, isouter=True
+        ).join(
+            ExperimentModel, Experiment.experiment_id == ExperimentModel.experiment_id, isouter=True
+        ).join(
+            EvaluationMetric, Experiment.experiment_id == EvaluationMetric.experiment_id, isouter=True
+        ).join(
+            ExperimentRequirement, Experiment.experiment_id == ExperimentRequirement.experiment_id, isouter=True
+        ).all()
+        
+    grouped_results = []
+    for key, group in groupby(results, key=lambda x: x.experiment_id):
+        grouped_results.append(list(group))
+
+    return render_template('form_example_sqlalchemy.html', results=grouped_results, filters=filters)
+
 if __name__ == '__main__':
-    
     app.run(host='0.0.0.0', port=5002)

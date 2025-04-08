@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment Query Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Query Experiments</h1>
+
+        <!-- Form Section -->
+        <form method="POST" action="/query_example_new_sqlalchemy" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label for="experiment_name" class="form-label">Experiment Name</label>
+                <input type="text" class="form-control" id="experiment_name" name="experiment_name" placeholder="Experiment Name">
+            </div>
+            <div class="col-md-4">
+                <label for="intent" class="form-label">Intent</label>
+                <select id="intent" name="intent" class="form-select">
+                    <option value="">--Select Intent--</option>
+                    <option value="classification">Classification</option>
+                    <option value="regression">Regression</option>
+                    <option value="clustering">Clustering</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="start_date" class="form-label">Start Date</label>
+                <input type="date" class="form-control" id="start_date" name="start_date">
+            </div>
+            <div class="col-md-4">
+                <label for="end_date" class="form-label">End Date</label>
+                <input type="date" class="form-control" id="end_date" name="end_date">
+            </div>
+            <div class="col-md-4">
+                <label for="algorithm" class="form-label">Algorithm</label>
+                <input type="text" class="form-control" id="algorithm" name="algorithm" placeholder="Algorithm">
+            </div>
+            <div class="col-md-4">
+                <label for="metric_name" class="form-label">Metric Name</label>
+                <input type="text" class="form-control" id="metric_name" name="metric_name" placeholder="Metric Name">
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+
+        <!-- Results Table
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Experiment ID</th>
+                    <th>Experiment Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Collaborators</th>
+                    <th>Status</th>
+                    <th>Algorithm</th>
+                    <th>Metric Name</th>
+                    <th>Metric Value</th>
+                    <th>Lessons Learnt</th>
+                    <th>Experiment Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.experiment_id }}</td>
+                    <td>{{ result.experiment_name }}</td>
+                    <td>{{ result.experiment_start }}</td>
+                    <td>{{ result.experiment_end }}</td>
+                    <td>{{ result.collaborators }}</td>
+                    <td>{{ result.status }}</td>
+                    <td>{{ result.algorithm }}</td>
+                    <td>{{ result.metric_name }}</td>
+                    <td>{{ result.metric_value }}</td>
+                    <td>{{ result.lessons_learnt }}</td>
+                    <td>{{ result.experiment_rating }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table> -->
+        <!-- Results Table with Collapsible Rows -->
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Experiment ID</th>
+                    <th>Experiment Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Intent</th>
+                    <th>Lessons Learnt</th>
+                    <th>Collaborators</th>
+                    <th>Status</th>
+                    <th>More Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in results %}
+                <tr>
+                    <td>{{ group[0].experiment_id }}</td>
+                    <td>{{ group[0].experiment_name }}</td>
+                    <td>{{ group[0].experiment_start }}</td>
+                    <td>{{ group[0].experiment_end }}</td>
+                    <td>{{ group[0].intent }}</td>
+                    <td>{{ group[0].lessons_learnt }}</td>
+                    <td>
+                        {% if group[0].collaborators %}
+                            {{ group[0].collaborators | join(', ') }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>{{ group[0].status }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#details-{{ group[0].experiment_id }}" aria-expanded="false" aria-controls="details-{{ group[0].experiment_id }}">
+                            View Details
+                        </button>
+                    </td>
+                </tr>
+                <tr class="collapse" id="details-{{ group[0].experiment_id }}">
+                    <td colspan="7">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Metric Name</th>
+                                    <th>Metric Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in group %}
+                                <tr>
+                                    <td>{{ row.algorithm }}</td>
+                                    <td>{{ row.metric_name }}</td>
+                                    <td>{{ row.metric_value }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
