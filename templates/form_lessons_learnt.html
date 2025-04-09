@@ -33,11 +33,53 @@
                             <div class="mb-3">
                                 <label for="experimentRating" class="form-label">Experiment Rating (1-7):</label>
                                 <input type="number" class="form-control" id="experimentRating" name="experimentRating" min="1" max="7" required>
+                                <div class="invalid-feedback">Please provide a rating between 1 and 7.</div>
+                                <!-- <div class="valid-feedback">Looks good!</div> -->
                             </div>
                             <div class="mb-3">
                                 <label for="runRatings" class="form-label">Run Ratings (1-7, comma separated):</label>
                                 <input type="text" class="form-control" id="runRatings" name="runRatings" required>
+                                <div class="invalid-feedback">Please provide run ratings as a comma-separated list of numbers between 1 and 7.</div>
+                                <!-- <div class="valid-feedback">Looks good!</div> -->
                             </div>
+                            
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    const experimentRatingInput = document.getElementById("experimentRating");
+                                    const runRatingsInput = document.getElementById("runRatings");
+                            
+                                    // Validate Experiment Rating
+                                    experimentRatingInput.addEventListener("input", function () {
+                                        const value = parseInt(this.value, 10);
+                                        if (!isNaN(value) && value >= 1 && value <= 7) {
+                                            this.classList.remove("is-invalid");
+                                            this.classList.add("is-valid");
+                                        } else {
+                                            this.classList.remove("is-valid");
+                                            this.classList.add("is-invalid");
+                                        }
+                                    });
+                            
+                                     // Validate Run Ratings
+                                    runRatingsInput.addEventListener("input", function () {
+                                        const isValid = validateRunRatings(this.value);
+                                        if (isValid) {
+                                            this.classList.remove("is-invalid");
+                                            this.classList.add("is-valid");
+                                        } else {
+                                            this.classList.remove("is-valid");
+                                            this.classList.add("is-invalid");
+                                        }
+                                    });
+
+                                    // Helper function to validate run ratings
+                                    function validateRunRatings(value) {
+                                        // Ensure the input matches the pattern for a comma-separated list of numbers between 1 and 7
+                                        const regex = /^([1-7](,\s*[1-7])*)?$/;
+                                        return regex.test(value);
+                                    }
+                                });
+                            </script>
                             <div class="mb-3">
                                 <label for="pdfFile" class="form-label">Attach PDF File:</label>
                                 <input type="file" class="form-control" id="pdfFile" name="pdfFile" accept=".pdf" >

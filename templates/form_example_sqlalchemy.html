@@ -92,6 +92,8 @@
                     <th>End Date</th>
                     <th>Intent</th>
                     <th>Lessons Learnt</th>
+                    <th>Dataset</th>
+                    <th>User Rating</th>
                     <th>Collaborators</th>
                     <th>Status</th>
                     <th>More Details</th>
@@ -106,6 +108,16 @@
                     <td>{{ group[0].experiment_end }}</td>
                     <td>{{ group[0].intent }}</td>
                     <td>{{ group[0].lessons_learnt }}</td>
+                    <td>{{ group[0].dataset_name }}</td> 
+                    <td>
+                        <!-- Display user rating as stars -->
+                        {% for i in range(group[0].experiment_rating) %}
+                            <span class="text-warning">&#9733;</span> 
+                        {% endfor %}
+                        {% for i in range(7 - group[0].experiment_rating) %}
+                            <span class="text-secondary">&#9734;</span> 
+                        {% endfor %}
+                    </td>
                     <td>
                         {% if group[0].collaborators %}
                             {{ group[0].collaborators | join(', ') }}

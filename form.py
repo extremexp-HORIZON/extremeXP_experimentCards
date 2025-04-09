@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template, request, flash, redirect, url_for
-from app.models import db, Experiment,ExperimentRequirement, ExperimentModel, EvaluationMetric, LessonLearnt
+from app.models import db, Experiment,ExperimentRequirement, ExperimentModel, EvaluationMetric, LessonLearnt, ExperimentDataset
 from app.config import Config
 from app.ingest import load_and_insert
 from itertools import groupby
@@ -353,7 +353,8 @@ def query_example_new_sqlalchemy():
             EvaluationMetric.name.label("metric_name"),
             EvaluationMetric.value.label("metric_value"),
             LessonLearnt.lessons_learnt,
-            LessonLearnt.experiment_rating
+            LessonLearnt.experiment_rating, 
+            ExperimentDataset.name.label("dataset_name")
         ).join(
             LessonLearnt, Experiment.experiment_id == LessonLearnt.experiment_id, isouter=True
         ).join(
@@ -362,6 +363,8 @@ def query_example_new_sqlalchemy():
             EvaluationMetric, Experiment.experiment_id == EvaluationMetric.experiment_id, isouter=True
         ).join(
             ExperimentRequirement, Experiment.experiment_id == ExperimentRequirement.experiment_id, isouter=True
+        ).join(
+            ExperimentDataset, Experiment.experiment_id == ExperimentDataset.experiment_id, isouter=True
         )
 
         # Apply filters dynamically
@@ -395,7 +398,8 @@ def query_example_new_sqlalchemy():
             EvaluationMetric.name.label("metric_name"),
             EvaluationMetric.value.label("metric_value"),
             LessonLearnt.lessons_learnt,
-            LessonLearnt.experiment_rating
+            LessonLearnt.experiment_rating, 
+            ExperimentDataset.name.label("dataset_name")
         ).join(
             LessonLearnt, Experiment.experiment_id == LessonLearnt.experiment_id, isouter=True
         ).join(
@@ -404,6 +408,8 @@ def query_example_new_sqlalchemy():
             EvaluationMetric, Experiment.experiment_id == EvaluationMetric.experiment_id, isouter=True
         ).join(
             ExperimentRequirement, Experiment.experiment_id == ExperimentRequirement.experiment_id, isouter=True
+        ).join(
+            ExperimentDataset, Experiment.experiment_id == ExperimentDataset.experiment_id, isouter=True
         ).all()
         
     grouped_results = []
