@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4">Submit Lessons Learnt</h3>
+                        <p class="text-muted text-center mb-4">
+                            Please fill out the form below to submit your feedback regarding the execution of the experiment. 
+                            <br>
+                            <strong>Lessons Learnt:</strong> Cover topics such as what went well, limitations, advantages, conclusions, and any other relevant observations.
+                            <br>
+                            <strong>Experiment Rating:</strong> Provide a number between 1 and 7, where 1 is the lowest and 7 is the highest.
+                            <br>
+                            <strong>Run Ratings:</strong> Enter a comma-separated list of numbers between 1 and 7, corresponding to the runs of the experiment.
+                            <br>
+                            <strong>Additional Documentation:</strong> If you have any additional documentation or files to share, please attach them using the file upload option below.
+                        </p>
+                        <form method="post" action="/submit" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="lessonsLearnt" class="form-label">Lessons Learnt:</label>
+                                <textarea class="form-control" id="lessonsLearnt" name="lessonsLearnt" rows="4" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="experimentRating" class="form-label">Experiment Rating (1-7):</label>
+                                <input type="number" class="form-control" id="experimentRating" name="experimentRating" min="1" max="7" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="runRatings" class="form-label">Run Ratings (1-7, comma separated):</label>
+                                <input type="text" class="form-control" id="runRatings" name="runRatings" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="pdfFile" class="form-label">Attach PDF File:</label>
+                                <input type="file" class="form-control" id="pdfFile" name="pdfFile" accept=".pdf" >
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

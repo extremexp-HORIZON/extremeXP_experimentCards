@@ -1,10 +1,17 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, flash, redirect, url_for
 from app.models import db, Experiment,ExperimentRequirement, ExperimentModel, EvaluationMetric, LessonLearnt
 from app.config import Config
 from app.ingest import load_and_insert
 from itertools import groupby
 from operator import itemgetter
 from sqlalchemy.sql import func
+import requests
+import os
+import json
+from werkzeug.utils import secure_filename
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 def create_app():
     app = Flask(__name__)
@@ -27,7 +34,37 @@ EXPERIMENT_ID = "jZa-mJQBZTyxy1ACX1W8"
 BASE_URL = "https://api.expvis.smartarch.cz/api"
 
 
+# def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", parent_type="experiment"):
+#     headers = {"access-token": ACCESS_TOKEN, "Content-Type": "application/json"}
+#     metrics_url = f"{BASE_URL}/metrics"
+#     payload = {
+#         "name": name,
+#         "type": metric_type,
+#         "kind": kind,
+#         "value": value,
+#         "parent_type": parent_type,
+#         "parent_id": experiment_id
+#     }
+#     print(payload)
+#     response = requests.put(metrics_url, headers=headers, data=json.dumps(payload))
+#     print(response.json())
+#     return response.json()
+
 def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", parent_type="experiment"):
+    """
+    Sends a PUT request to the API to add a metric.
+
+    Args:
+        experiment_id (str): The ID of the experiment.
+        name (str): The name of the metric.
+        value (str): The value of the metric.
+        metric_type (str): The type of the metric (default: "string").
+        kind (str): The kind of the metric (default: "scalar").
+        parent_type (str): The parent type of the metric (default: "experiment").
+
+    Returns:
+        dict: The JSON response from the API.
+    """
     headers = {"access-token": ACCESS_TOKEN, "Content-Type": "application/json"}
     metrics_url = f"{BASE_URL}/metrics"
     payload = {
@@ -38,13 +75,26 @@ def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", 
         "parent_type": parent_type,
         "parent_id": experiment_id
     }
-    response = requests.put(metrics_url, headers=headers, data=json.dumps(payload))
-    return response.json()
 
-@app.route("/", methods=["GET"])
+    try:
+        # Send the PUT request
+        response = requests.put(metrics_url, headers=headers, data=json.dumps(payload))
+        if response.status_code in [200, 201]:
+            logging.info("Response JSON:", response.json())  # Debugging
+            return {"success": True, "data": response.json()}
+        
+        # Handle unexpected status codes
+        logging.info(f"Unexpected status code: {response.status_code} - {response.text}")
+        return {"success": False, "error": f"Unexpected status code: {response.status_code}"}
+    
+    except requests.exceptions.RequestException as e:
+        # Log the error and return a failure response
+        logging.info(f"Error during API call: {e}")
+        return {"success": False, "error": str(e)}
+
+@app.route("/form_lessons_learnt", methods=["GET"])
 def form():
-    return render_template("form.html")
-
+    return render_template("form_lessons_learnt.html")
 
 
 @app.route('/experiments', methods=['GET'])
@@ -64,29 +114,65 @@ def message_page():
     color = "#28a745" if status == "success" else "#dc3545"  # Green for success, red for error
     return render_template("message.html", msg=msg, color=color)
 
-@app.route("/submit", methods=["POST"])
+UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', '/app/uploads') 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['ALLOWED_EXTENSIONS'] = {'pdf'}
+app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024  
+import logging
+
+@app.route('/submit', methods=['POST'])
 def submit_form():
-    lessonsLearnt = request.form.get("lessonsLearnt")
-    experimentRating = request.form.get("experimentRating")
-    runRatings = request.form.get("runRatings")
-
     try:
-        experimentRating = int(experimentRating)
-        run_ratings = [int(r.strip()) for r in runRatings.split(",")]
-    except ValueError:
-        return redirect(url_for("message_page", status="error", msg="Invalid input."))
+        lessons_learnt = request.form.get('lessonsLearnt')
+        experiment_rating = request.form.get('experimentRating')
+        run_ratings = request.form.get('runRatings')
+        pdf_file = request.files.get('pdfFile')
+        logging.info(f"Lessons Learnt: {lessons_learnt}")
+        logging.info(f"Experiment Rating: {experiment_rating}")
+        logging.info(f"Run Ratings: {run_ratings}")
+        # Validate and save the uploaded file
+        if pdf_file and pdf_file.filename:
+            filename = secure_filename(pdf_file.filename)
+            if not filename.endswith('.pdf'):
+                return redirect(url_for("message_page", status="error", msg="Invalid file format. Please upload a PDF file."))
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            pdf_file.save(file_path)
+        # else:
+        #     return redirect(url_for("message_page", status="error", msg="No file uploaded."))
 
-    if any(r < 1 or r > 7 for r in run_ratings):
-        return redirect(url_for("message_page", status="error", msg="Each run rating must be between 1 and 7."))
+        # Validate form inputs
+        try:
+            experiment_rating = int(experiment_rating)
+            logging.info(experiment_rating)
+        except ValueError:
+            return redirect(url_for("message_page", status="error", msg="Experiment rating must be an integer."))
 
-    response_lessons = add_metric(EXPERIMENT_ID, "lessonsLearnt", lessonsLearnt, "string")
-    response_experiment = add_metric(EXPERIMENT_ID, "experimentRating", str(experimentRating), "string")
-    response_runs = add_metric(EXPERIMENT_ID, "runRatings", str(run_ratings), "series")
+        try:
+            run_ratings = [int(r.strip()) for r in run_ratings.split(",")]
+        except ValueError:
+            return redirect(url_for("message_page", status="error", msg="Run ratings must be integers separated by commas."))
 
-    if "error" in response_lessons or "error" in response_experiment or "error" in response_runs:
-        return redirect(url_for("message_page", status="error", msg="Failed to insert metrics."))
+        if any(r < 1 or r > 7 for r in run_ratings):
+            return redirect(url_for("message_page", status="error", msg="Each run rating must be between 1 and 7 (inclusive)."))
 
-    return redirect(url_for("message_page", status="success", msg="Metrics successfully inserted!"))
+        # Add metrics to DAL
+        logging.info(lessons_learnt)
+        response_lessons = add_metric(EXPERIMENT_ID, "lessonsLearnt", lessons_learnt, "string")
+        response_experiment = add_metric(EXPERIMENT_ID, "experimentRating", str(experiment_rating), "string")
+        response_runs = add_metric(EXPERIMENT_ID, "runRatings", str(run_ratings), "series")
+        logging.info(response_lessons)
+        if not response_lessons.get("success", False):
+            return redirect(url_for("message_page", status="error", msg="Failed to insert lessons learnt metric."))
+        if not response_experiment.get("success", False):
+            return redirect(url_for("message_page", status="error", msg="Failed to insert experiment rating metric."))
+        if not response_runs.get("success", False):
+            return redirect(url_for("message_page", status="error", msg="Failed to insert run ratings metric."))
+
+        return redirect(url_for("message_page", status="success", msg="Metrics successfully inserted!"))
+
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        return redirect(url_for("message_page", status="error", msg="An unexpected error occurred. Please try again later."))
 
 def get_db_connection():
     conn = psycopg2.connect(
@@ -327,4 +413,4 @@ def query_example_new_sqlalchemy():
     return render_template('form_example_sqlalchemy.html', results=grouped_results, filters=filters)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5002)
+    app.run(host='0.0.0.0', port=5002, debug=True)

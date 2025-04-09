@@ -22,9 +22,11 @@ services:
       - "5002:5002"
     volumes:
       - .:/app  
+      - ./uploads:/app/uploads  
     environment:
       FLASK_ENV: development 
        - DATABASE_URL=postgresql://user:password@postgres:5432/experiments
+       - UPLOAD_FOLDER=/app/uploads  
     depends_on:
       - postgres
     networks:
@@ -32,6 +34,7 @@ services:
 
 volumes:
   postgres_data:
+  uploads:
 
 networks:
   app_network:
