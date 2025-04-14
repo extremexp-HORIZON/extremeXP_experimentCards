@@ -1,0 +1,1283 @@
+{
+    "experimentCard": {
+        "experimentInfo": {
+            "experimentId": "fuTt55IBLOWBshtiLyul",
+            "experimentName": "moby-exp1",
+            "intent": "Classification",
+            "constraints": [
+                {
+                    "id": "ConstraintXX",
+                    "on": "SVM",
+                    "isHard": true,
+                    "how": "Use"
+                }
+            ],
+            "requirements": [
+                {
+                    "id": "RequirementXX",
+                    "metric": "Accuracy",
+                    "method": "CrossValidation",
+                    "objective": "Maximize"
+                }
+            ],
+            "experimentStartDate": [
+                null
+            ],
+            "experimentEndDate": [
+                null
+            ],
+            "status": "completed",
+            "collaborators": [],
+            "userInteraction": []
+        },
+        "variabilityPoints": {
+            "dataSet": {
+                "id_dataset": null,
+                "name": null,
+                "zenoh_key_expr": null,
+                "reviewer_score": null,
+                "path": null
+            },
+            "model": {
+                "algorithm": [],
+                "parameters": {},
+                "modelJSON": {
+                    "package": {
+                        "name": "MOBY",
+                        "components": [
+                            {
+                                "workflow": {
+                                    "name": "PythiaWorkflow",
+                                    "tasks": [
+                                        {
+                                            "name": "ReadData"
+                                        },
+                                        {
+                                            "name": "PreprocessData"
+                                        },
+                                        {
+                                            "name": "TimeBasedClustering"
+                                        },
+                                        {
+                                            "name": "TimeAndSpeedBasedClustering"
+                                        },
+                                        {
+                                            "name": "RuleBasedSegmentCombination"
+                                        },
+                                        {
+                                            "name": "ModeEstimation"
+                                        },
+                                        {
+                                            "name": "RuleBasedSegmentationCombinationUsingModes"
+                                        },
+                                        {
+                                            "name": "ActivityEstimation"
+                                        }
+                                    ],
+                                    "data": [
+                                        {
+                                            "name": "InputCSV",
+                                            "output": false,
+                                            "input": true,
+                                            "assigned": false,
+                                            "values": []
+                                        },
+                                        {
+                                            "name": "Overpass",
+                                            "output": false,
+                                            "input": true,
+                                            "assigned": false,
+                                            "values": []
+                                        }
+                                    ],
+                                    "operators": [],
+                                    "dataConfigs": [
+                                        {
+                                            "alias": {
+                                                "name": "InputCSV",
+                                                "output": false,
+                                                "input": true,
+                                                "assigned": false,
+                                                "values": []
+                                            },
+                                            "path": "testcase_locations_sample.csv"
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "Overpass",
+                                                "output": false,
+                                                "input": true,
+                                                "assigned": false,
+                                                "values": []
+                                            },
+                                            "path": "amenities_mapping_OverpassAPI.pickle"
+                                        }
+                                    ],
+                                    "taskConfigs": [
+                                        {
+                                            "alias": {
+                                                "name": "ReadData"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "ReadData"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "PreprocessData"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "PreprocessData"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "TimeBasedClustering"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "TimeBasedClustering"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "TimeAndSpeedBasedClustering"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "TimeAndSpeedBasedClustering"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "RuleBasedSegmentCombination"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "RuleBasedSegmentCombination"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "ModeEstimation"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "ModeEstimation"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "RuleBasedSegmentationCombinationUsingModes"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "RuleBasedSegmentationCombinationUsingModes"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "ActivityEstimation"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "ActivityEstimation"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        }
+                                    ],
+                                    "nodeLinks": [
+                                        {
+                                            "started": true,
+                                            "nodes": [
+                                                {
+                                                    "name": "ReadData"
+                                                },
+                                                {
+                                                    "name": "PreprocessData"
+                                                },
+                                                {
+                                                    "name": "TimeBasedClustering"
+                                                },
+                                                {
+                                                    "name": "TimeAndSpeedBasedClustering"
+                                                },
+                                                {
+                                                    "name": "RuleBasedSegmentCombination"
+                                                },
+                                                {
+                                                    "name": "ModeEstimation"
+                                                },
+                                                {
+                                                    "name": "RuleBasedSegmentationCombinationUsingModes"
+                                                },
+                                                {
+                                                    "name": "ActivityEstimation"
+                                                }
+                                            ],
+                                            "ended": true
+                                        }
+                                    ],
+                                    "dataLinks": [
+                                        {
+                                            "initialQualifiedData": null,
+                                            "initialElement": {
+                                                "name": "InputCSV",
+                                                "output": false,
+                                                "input": true,
+                                                "assigned": false,
+                                                "values": []
+                                            },
+                                            "restElements": [],
+                                            "restQualifiedElements": [
+                                                {
+                                                    "node": {
+                                                        "name": "ReadData"
+                                                    },
+                                                    "data": {
+                                                        "name": "InputCSV",
+                                                        "output": false,
+                                                        "input": true,
+                                                        "assigned": false,
+                                                        "values": []
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "initialQualifiedData": null,
+                                            "initialElement": {
+                                                "name": "Overpass",
+                                                "output": false,
+                                                "input": true,
+                                                "assigned": false,
+                                                "values": []
+                                            },
+                                            "restElements": [],
+                                            "restQualifiedElements": [
+                                                {
+                                                    "node": {
+                                                        "name": "ActivityEstimation"
+                                                    },
+                                                    "data": {
+                                                        "name": "Overpass",
+                                                        "output": false,
+                                                        "input": true,
+                                                        "assigned": false,
+                                                        "values": []
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "metrics": [],
+                                    "conditionalLinks": []
+                                },
+                                "assembledWorkflow": null,
+                                "experiment": null
+                            },
+                            {
+                                "workflow": null,
+                                "assembledWorkflow": {
+                                    "name": "PythiaWorkflowBaseline",
+                                    "parentWorkflow": {
+                                        "name": "PythiaWorkflow",
+                                        "tasks": [
+                                            {
+                                                "name": "ReadData"
+                                            },
+                                            {
+                                                "name": "PreprocessData"
+                                            },
+                                            {
+                                                "name": "TimeBasedClustering"
+                                            },
+                                            {
+                                                "name": "TimeAndSpeedBasedClustering"
+                                            },
+                                            {
+                                                "name": "RuleBasedSegmentCombination"
+                                            },
+                                            {
+                                                "name": "ModeEstimation"
+                                            },
+                                            {
+                                                "name": "RuleBasedSegmentationCombinationUsingModes"
+                                            },
+                                            {
+                                                "name": "ActivityEstimation"
+                                            }
+                                        ],
+                                        "data": [
+                                            {
+                                                "name": "InputCSV",
+                                                "output": false,
+                                                "input": true,
+                                                "assigned": false,
+                                                "values": []
+                                            },
+                                            {
+                                                "name": "Overpass",
+                                                "output": false,
+                                                "input": true,
+                                                "assigned": false,
+                                                "values": []
+                                            }
+                                        ],
+                                        "operators": [],
+                                        "dataConfigs": [
+                                            {
+                                                "alias": {
+                                                    "name": "InputCSV",
+                                                    "output": false,
+                                                    "input": true,
+                                                    "assigned": false,
+                                                    "values": []
+                                                },
+                                                "path": "testcase_locations_sample.csv"
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "Overpass",
+                                                    "output": false,
+                                                    "input": true,
+                                                    "assigned": false,
+                                                    "values": []
+                                                },
+                                                "path": "amenities_mapping_OverpassAPI.pickle"
+                                            }
+                                        ],
+                                        "taskConfigs": [
+                                            {
+                                                "alias": {
+                                                    "name": "ReadData"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "ReadData"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "PreprocessData"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "PreprocessData"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "TimeBasedClustering"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "TimeBasedClustering"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "TimeAndSpeedBasedClustering"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "TimeAndSpeedBasedClustering"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "RuleBasedSegmentCombination"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "RuleBasedSegmentCombination"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "ModeEstimation"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "ModeEstimation"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "RuleBasedSegmentationCombinationUsingModes"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "RuleBasedSegmentationCombinationUsingModes"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "ActivityEstimation"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "ActivityEstimation"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            }
+                                        ],
+                                        "nodeLinks": [
+                                            {
+                                                "started": true,
+                                                "nodes": [
+                                                    {
+                                                        "name": "ReadData"
+                                                    },
+                                                    {
+                                                        "name": "PreprocessData"
+                                                    },
+                                                    {
+                                                        "name": "TimeBasedClustering"
+                                                    },
+                                                    {
+                                                        "name": "TimeAndSpeedBasedClustering"
+                                                    },
+                                                    {
+                                                        "name": "RuleBasedSegmentCombination"
+                                                    },
+                                                    {
+                                                        "name": "ModeEstimation"
+                                                    },
+                                                    {
+                                                        "name": "RuleBasedSegmentationCombinationUsingModes"
+                                                    },
+                                                    {
+                                                        "name": "ActivityEstimation"
+                                                    }
+                                                ],
+                                                "ended": true
+                                            }
+                                        ],
+                                        "dataLinks": [
+                                            {
+                                                "initialQualifiedData": null,
+                                                "initialElement": {
+                                                    "name": "InputCSV",
+                                                    "output": false,
+                                                    "input": true,
+                                                    "assigned": false,
+                                                    "values": []
+                                                },
+                                                "restElements": [],
+                                                "restQualifiedElements": [
+                                                    {
+                                                        "node": {
+                                                            "name": "ReadData"
+                                                        },
+                                                        "data": {
+                                                            "name": "InputCSV",
+                                                            "output": false,
+                                                            "input": true,
+                                                            "assigned": false,
+                                                            "values": []
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "initialQualifiedData": null,
+                                                "initialElement": {
+                                                    "name": "Overpass",
+                                                    "output": false,
+                                                    "input": true,
+                                                    "assigned": false,
+                                                    "values": []
+                                                },
+                                                "restElements": [],
+                                                "restQualifiedElements": [
+                                                    {
+                                                        "node": {
+                                                            "name": "ActivityEstimation"
+                                                        },
+                                                        "data": {
+                                                            "name": "Overpass",
+                                                            "output": false,
+                                                            "input": true,
+                                                            "assigned": false,
+                                                            "values": []
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "metrics": [],
+                                        "conditionalLinks": []
+                                    },
+                                    "taskConfigs": []
+                                },
+                                "experiment": null
+                            },
+                            {
+                                "workflow": null,
+                                "assembledWorkflow": null,
+                                "experiment": {
+                                    "name": "EXP1_moby",
+                                    "intent": "FindBestPythiaConfiguration",
+                                    "control": {
+                                        "expLink": [
+                                            {
+                                                "started": true,
+                                                "nodes": [
+                                                    {
+                                                        "name": "S1",
+                                                        "assembled_workflow": {
+                                                            "name": "PythiaWorkflowBaseline",
+                                                            "parentWorkflow": {
+                                                                "name": "PythiaWorkflow",
+                                                                "tasks": [
+                                                                    {
+                                                                        "name": "ReadData"
+                                                                    },
+                                                                    {
+                                                                        "name": "PreprocessData"
+                                                                    },
+                                                                    {
+                                                                        "name": "TimeBasedClustering"
+                                                                    },
+                                                                    {
+                                                                        "name": "TimeAndSpeedBasedClustering"
+                                                                    },
+                                                                    {
+                                                                        "name": "RuleBasedSegmentCombination"
+                                                                    },
+                                                                    {
+                                                                        "name": "ModeEstimation"
+                                                                    },
+                                                                    {
+                                                                        "name": "RuleBasedSegmentationCombinationUsingModes"
+                                                                    },
+                                                                    {
+                                                                        "name": "ActivityEstimation"
+                                                                    }
+                                                                ],
+                                                                "data": [
+                                                                    {
+                                                                        "name": "InputCSV",
+                                                                        "output": false,
+                                                                        "input": true,
+                                                                        "assigned": false,
+                                                                        "values": []
+                                                                    },
+                                                                    {
+                                                                        "name": "Overpass",
+                                                                        "output": false,
+                                                                        "input": true,
+                                                                        "assigned": false,
+                                                                        "values": []
+                                                                    }
+                                                                ],
+                                                                "operators": [],
+                                                                "dataConfigs": [
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "InputCSV",
+                                                                            "output": false,
+                                                                            "input": true,
+                                                                            "assigned": false,
+                                                                            "values": []
+                                                                        },
+                                                                        "path": "testcase_locations_sample.csv"
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "Overpass",
+                                                                            "output": false,
+                                                                            "input": true,
+                                                                            "assigned": false,
+                                                                            "values": []
+                                                                        },
+                                                                        "path": "amenities_mapping_OverpassAPI.pickle"
+                                                                    }
+                                                                ],
+                                                                "taskConfigs": [
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "ReadData"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "ReadData"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "PreprocessData"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "PreprocessData"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "TimeBasedClustering"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "TimeBasedClustering"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "TimeAndSpeedBasedClustering"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "TimeAndSpeedBasedClustering"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "RuleBasedSegmentCombination"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "RuleBasedSegmentCombination"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "ModeEstimation"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "ModeEstimation"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "RuleBasedSegmentationCombinationUsingModes"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "RuleBasedSegmentationCombinationUsingModes"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "ActivityEstimation"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "ActivityEstimation"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    }
+                                                                ],
+                                                                "nodeLinks": [
+                                                                    {
+                                                                        "started": true,
+                                                                        "nodes": [
+                                                                            {
+                                                                                "name": "ReadData"
+                                                                            },
+                                                                            {
+                                                                                "name": "PreprocessData"
+                                                                            },
+                                                                            {
+                                                                                "name": "TimeBasedClustering"
+                                                                            },
+                                                                            {
+                                                                                "name": "TimeAndSpeedBasedClustering"
+                                                                            },
+                                                                            {
+                                                                                "name": "RuleBasedSegmentCombination"
+                                                                            },
+                                                                            {
+                                                                                "name": "ModeEstimation"
+                                                                            },
+                                                                            {
+                                                                                "name": "RuleBasedSegmentationCombinationUsingModes"
+                                                                            },
+                                                                            {
+                                                                                "name": "ActivityEstimation"
+                                                                            }
+                                                                        ],
+                                                                        "ended": true
+                                                                    }
+                                                                ],
+                                                                "dataLinks": [
+                                                                    {
+                                                                        "initialQualifiedData": null,
+                                                                        "initialElement": {
+                                                                            "name": "InputCSV",
+                                                                            "output": false,
+                                                                            "input": true,
+                                                                            "assigned": false,
+                                                                            "values": []
+                                                                        },
+                                                                        "restElements": [],
+                                                                        "restQualifiedElements": [
+                                                                            {
+                                                                                "node": {
+                                                                                    "name": "ReadData"
+                                                                                },
+                                                                                "data": {
+                                                                                    "name": "InputCSV",
+                                                                                    "output": false,
+                                                                                    "input": true,
+                                                                                    "assigned": false,
+                                                                                    "values": []
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "initialQualifiedData": null,
+                                                                        "initialElement": {
+                                                                            "name": "Overpass",
+                                                                            "output": false,
+                                                                            "input": true,
+                                                                            "assigned": false,
+                                                                            "values": []
+                                                                        },
+                                                                        "restElements": [],
+                                                                        "restQualifiedElements": [
+                                                                            {
+                                                                                "node": {
+                                                                                    "name": "ActivityEstimation"
+                                                                                },
+                                                                                "data": {
+                                                                                    "name": "Overpass",
+                                                                                    "output": false,
+                                                                                    "input": true,
+                                                                                    "assigned": false,
+                                                                                    "values": []
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ],
+                                                                "metrics": [],
+                                                                "conditionalLinks": []
+                                                            },
+                                                            "taskConfigs": []
+                                                        },
+                                                        "strategy_name": {
+                                                            "runs": 0
+                                                        },
+                                                        "params": [],
+                                                        "tasks": []
+                                                    }
+                                                ],
+                                                "ended": true
+                                            }
+                                        ]
+                                    },
+                                    "spaces": [
+                                        {
+                                            "name": "S1",
+                                            "assembled_workflow": {
+                                                "name": "PythiaWorkflowBaseline",
+                                                "parentWorkflow": {
+                                                    "name": "PythiaWorkflow",
+                                                    "tasks": [
+                                                        {
+                                                            "name": "ReadData"
+                                                        },
+                                                        {
+                                                            "name": "PreprocessData"
+                                                        },
+                                                        {
+                                                            "name": "TimeBasedClustering"
+                                                        },
+                                                        {
+                                                            "name": "TimeAndSpeedBasedClustering"
+                                                        },
+                                                        {
+                                                            "name": "RuleBasedSegmentCombination"
+                                                        },
+                                                        {
+                                                            "name": "ModeEstimation"
+                                                        },
+                                                        {
+                                                            "name": "RuleBasedSegmentationCombinationUsingModes"
+                                                        },
+                                                        {
+                                                            "name": "ActivityEstimation"
+                                                        }
+                                                    ],
+                                                    "data": [
+                                                        {
+                                                            "name": "InputCSV",
+                                                            "output": false,
+                                                            "input": true,
+                                                            "assigned": false,
+                                                            "values": []
+                                                        },
+                                                        {
+                                                            "name": "Overpass",
+                                                            "output": false,
+                                                            "input": true,
+                                                            "assigned": false,
+                                                            "values": []
+                                                        }
+                                                    ],
+                                                    "operators": [],
+                                                    "dataConfigs": [
+                                                        {
+                                                            "alias": {
+                                                                "name": "InputCSV",
+                                                                "output": false,
+                                                                "input": true,
+                                                                "assigned": false,
+                                                                "values": []
+                                                            },
+                                                            "path": "testcase_locations_sample.csv"
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "Overpass",
+                                                                "output": false,
+                                                                "input": true,
+                                                                "assigned": false,
+                                                                "values": []
+                                                            },
+                                                            "path": "amenities_mapping_OverpassAPI.pickle"
+                                                        }
+                                                    ],
+                                                    "taskConfigs": [
+                                                        {
+                                                            "alias": {
+                                                                "name": "ReadData"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "ReadData"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "PreprocessData"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "PreprocessData"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "TimeBasedClustering"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "TimeBasedClustering"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "TimeAndSpeedBasedClustering"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "TimeAndSpeedBasedClustering"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "RuleBasedSegmentCombination"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "RuleBasedSegmentCombination"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "ModeEstimation"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "ModeEstimation"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "RuleBasedSegmentationCombinationUsingModes"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "RuleBasedSegmentationCombinationUsingModes"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "ActivityEstimation"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "ActivityEstimation"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        }
+                                                    ],
+                                                    "nodeLinks": [
+                                                        {
+                                                            "started": true,
+                                                            "nodes": [
+                                                                {
+                                                                    "name": "ReadData"
+                                                                },
+                                                                {
+                                                                    "name": "PreprocessData"
+                                                                },
+                                                                {
+                                                                    "name": "TimeBasedClustering"
+                                                                },
+                                                                {
+                                                                    "name": "TimeAndSpeedBasedClustering"
+                                                                },
+                                                                {
+                                                                    "name": "RuleBasedSegmentCombination"
+                                                                },
+                                                                {
+                                                                    "name": "ModeEstimation"
+                                                                },
+                                                                {
+                                                                    "name": "RuleBasedSegmentationCombinationUsingModes"
+                                                                },
+                                                                {
+                                                                    "name": "ActivityEstimation"
+                                                                }
+                                                            ],
+                                                            "ended": true
+                                                        }
+                                                    ],
+                                                    "dataLinks": [
+                                                        {
+                                                            "initialQualifiedData": null,
+                                                            "initialElement": {
+                                                                "name": "InputCSV",
+                                                                "output": false,
+                                                                "input": true,
+                                                                "assigned": false,
+                                                                "values": []
+                                                            },
+                                                            "restElements": [],
+                                                            "restQualifiedElements": [
+                                                                {
+                                                                    "node": {
+                                                                        "name": "ReadData"
+                                                                    },
+                                                                    "data": {
+                                                                        "name": "InputCSV",
+                                                                        "output": false,
+                                                                        "input": true,
+                                                                        "assigned": false,
+                                                                        "values": []
+                                                                    }
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "initialQualifiedData": null,
+                                                            "initialElement": {
+                                                                "name": "Overpass",
+                                                                "output": false,
+                                                                "input": true,
+                                                                "assigned": false,
+                                                                "values": []
+                                                            },
+                                                            "restElements": [],
+                                                            "restQualifiedElements": [
+                                                                {
+                                                                    "node": {
+                                                                        "name": "ActivityEstimation"
+                                                                    },
+                                                                    "data": {
+                                                                        "name": "Overpass",
+                                                                        "output": false,
+                                                                        "input": true,
+                                                                        "assigned": false,
+                                                                        "values": []
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "metrics": [],
+                                                    "conditionalLinks": []
+                                                },
+                                                "taskConfigs": []
+                                            },
+                                            "strategy_name": {
+                                                "runs": 0
+                                            },
+                                            "params": [],
+                                            "tasks": []
+                                        }
+                                    ],
+                                    "events": []
+                                }
+                            }
+                        ]
+                    },
+                    "task": null
+                }
+            },
+            "processing": {
+                "workflow": [
+                    {
+                        "workflowId": "f-Tt55IBLOWBshtiMSu5",
+                        "tasks": [
+                            {
+                                "id": "ReadData",
+                                "name": "ReadData",
+                                "source_code": "MOBY/tasks/ReadData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "InputCSV",
+                                        "uri": "MOBY/datasets/testcase_locations_sample.csv"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "PreprocessData",
+                                "name": "PreprocessData",
+                                "source_code": "MOBY/tasks/PreprocessData/task.py"
+                            },
+                            {
+                                "id": "TimeBasedClustering",
+                                "name": "TimeBasedClustering",
+                                "source_code": "MOBY/tasks/TimeBasedClustering/task.py"
+                            },
+                            {
+                                "id": "TimeAndSpeedBasedClustering",
+                                "name": "TimeAndSpeedBasedClustering",
+                                "source_code": "MOBY/tasks/TimeAndSpeedBasedClustering/task.py"
+                            },
+                            {
+                                "id": "RuleBasedSegmentCombination",
+                                "name": "RuleBasedSegmentCombination",
+                                "source_code": "MOBY/tasks/RuleBasedSegmentCombination/task.py"
+                            },
+                            {
+                                "id": "ModeEstimation",
+                                "name": "ModeEstimation",
+                                "source_code": "MOBY/tasks/ModeEstimation/task.py"
+                            },
+                            {
+                                "id": "RuleBasedSegmentationCombinationUsingModes",
+                                "name": "RuleBasedSegmentationCombinationUsingModes",
+                                "source_code": "MOBY/tasks/RuleBasedSegmentationCombinationUsingModes/task.py"
+                            },
+                            {
+                                "id": "ActivityEstimation",
+                                "name": "ActivityEstimation",
+                                "source_code": "MOBY/tasks/ActivityEstimation/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "Overpass",
+                                        "uri": "MOBY/datasets/amenities_mapping_OverpassAPI.pickle"
+                                    }
+                                ]
+                            }
+                        ],
+                        "status": "completed"
+                    }
+                ],
+                "features": []
+            }
+        },
+        "evaluation": {
+            "runMetrics": [],
+            "metrics": []
+        }
+    }
+}

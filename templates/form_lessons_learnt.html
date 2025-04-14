@@ -13,7 +13,7 @@
             <div class="col-md-6">
                 <div class="card shadow">
                     <div class="card-body">
-                        <h3 class="card-title text-center mb-4">Submit Lessons Learnt</h3>
+                        <h3 class="card-title text-center mb-4">Submit Lessons Learnt for experiment with id {{experiment_id}}</h3>
                         <p class="text-muted text-center mb-4">
                             Please fill out the form below to submit your feedback regarding the execution of the experiment. 
                             <br>
@@ -25,7 +25,7 @@
                             <br>
                             <strong>Additional Documentation:</strong> If you have any additional documentation or files to share, please attach them using the file upload option below.
                         </p>
-                        <form method="post" action="/submit" enctype="multipart/form-data">
+                        <form method="post" action="/submit/{{ experiment_id }}" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="lessonsLearnt" class="form-label">Lessons Learnt:</label>
                                 <textarea class="form-control" id="lessonsLearnt" name="lessonsLearnt" rows="4" required></textarea>

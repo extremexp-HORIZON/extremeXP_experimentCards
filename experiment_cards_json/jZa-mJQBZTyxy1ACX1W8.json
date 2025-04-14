@@ -1,0 +1,2108 @@
+{
+    "experimentCard": {
+        "experimentInfo": {
+            "experimentId": "jZa-mJQBZTyxy1ACX1W8",
+            "experimentName": "IDEKO_main",
+            "intent": "Classification",
+            "constraints": [
+                {
+                    "id": "ConstraintXX",
+                    "on": "SVM",
+                    "isHard": true,
+                    "how": "Use"
+                }
+            ],
+            "requirements": [
+                {
+                    "id": "RequirementXX",
+                    "metric": "Accuracy",
+                    "method": "CrossValidation",
+                    "objective": "Maximize"
+                }
+            ],
+            "experimentStartDate": [
+                "2025-01-24T15:36:47Z",
+                "2025-01-24T15:37:59Z",
+                "2025-01-24T15:39:57Z"
+            ],
+            "experimentEndDate": [
+                "2025-01-24T15:37:57Z",
+                "2025-01-24T15:39:48Z",
+                "2025-01-24T15:42:40Z"
+            ],
+            "status": "completed",
+            "collaborators": [],
+            "userInteraction": [
+                {
+                    "stoppedByUser": "NA"
+                },
+                {
+                    "stoppedByUser": "NA"
+                },
+                {
+                    "stoppedByUser": "NA"
+                }
+            ]
+        },
+        "variabilityPoints": {
+            "dataSet": {
+                "id_dataset": "exp_engine/library-datasets/v1/ideko-subset/**",
+                "name": null,
+                "zenoh_key_expr": null,
+                "reviewer_score": null,
+                "path": "exp_engine/library-datasets/v1/ideko-subset/**"
+            },
+            "model": {
+                "algorithm": [
+                    "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                    "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                    "exp_engine/library-tasks/IDEKO/TrainModelRNN/task.py"
+                ],
+                "parameters": {
+                    "jpa-mJQBZTyxy1ACY1VE": [
+                        {
+                            "name": "epochs",
+                            "type": "integer",
+                            "value": "2"
+                        },
+                        {
+                            "name": "batch_size",
+                            "type": "integer",
+                            "value": "64"
+                        }
+                    ],
+                    "kpa-mJQBZTyxy1ACZlWa": [
+                        {
+                            "name": "epochs",
+                            "type": "integer",
+                            "value": "3"
+                        },
+                        {
+                            "name": "batch_size",
+                            "type": "integer",
+                            "value": "64"
+                        }
+                    ],
+                    "lpbBmJQBZTyxy1ACT1Vs": [
+                        {
+                            "name": "epochs",
+                            "type": "integer",
+                            "value": "2"
+                        },
+                        {
+                            "name": "batch_size",
+                            "type": "integer",
+                            "value": "32"
+                        }
+                    ]
+                },
+                "modelJSON": {
+                    "package": {
+                        "name": "IDEKO",
+                        "components": [
+                            {
+                                "workflow": {
+                                    "name": "IDEKO_multi_main",
+                                    "tasks": [
+                                        {
+                                            "name": "ReadData"
+                                        },
+                                        {
+                                            "name": "TrainModel"
+                                        },
+                                        {
+                                            "name": "EvaluateModel"
+                                        },
+                                        {
+                                            "name": "PrepareData"
+                                        }
+                                    ],
+                                    "data": [],
+                                    "operators": [],
+                                    "dataConfigs": [],
+                                    "taskConfigs": [
+                                        {
+                                            "alias": {
+                                                "name": "ReadData"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "IDEKO.ReadData"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "EvaluateModel"
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "IDEKO.EvaluateModel"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        },
+                                        {
+                                            "alias": {
+                                                "name": "PrepareData"
+                                            },
+                                            "params": [],
+                                            "implementations": [],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        }
+                                    ],
+                                    "nodeLinks": [
+                                        {
+                                            "started": true,
+                                            "nodes": [
+                                                {
+                                                    "name": "ReadData"
+                                                },
+                                                {
+                                                    "name": "PrepareData"
+                                                },
+                                                {
+                                                    "name": "TrainModel"
+                                                },
+                                                {
+                                                    "name": "EvaluateModel"
+                                                }
+                                            ],
+                                            "ended": true
+                                        }
+                                    ],
+                                    "dataLinks": [],
+                                    "metrics": [],
+                                    "conditionalLinks": []
+                                },
+                                "assembledWorkflow": null,
+                                "experiment": null
+                            },
+                            {
+                                "workflow": null,
+                                "assembledWorkflow": {
+                                    "name": "TrainModelNN",
+                                    "parentWorkflow": {
+                                        "name": "IDEKO_multi_main",
+                                        "tasks": [
+                                            {
+                                                "name": "ReadData"
+                                            },
+                                            {
+                                                "name": "TrainModel"
+                                            },
+                                            {
+                                                "name": "EvaluateModel"
+                                            },
+                                            {
+                                                "name": "PrepareData"
+                                            }
+                                        ],
+                                        "data": [],
+                                        "operators": [],
+                                        "dataConfigs": [],
+                                        "taskConfigs": [
+                                            {
+                                                "alias": {
+                                                    "name": "ReadData"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "IDEKO.ReadData"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "EvaluateModel"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "IDEKO.EvaluateModel"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "PrepareData"
+                                                },
+                                                "params": [],
+                                                "implementations": [],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            }
+                                        ],
+                                        "nodeLinks": [
+                                            {
+                                                "started": true,
+                                                "nodes": [
+                                                    {
+                                                        "name": "ReadData"
+                                                    },
+                                                    {
+                                                        "name": "PrepareData"
+                                                    },
+                                                    {
+                                                        "name": "TrainModel"
+                                                    },
+                                                    {
+                                                        "name": "EvaluateModel"
+                                                    }
+                                                ],
+                                                "ended": true
+                                            }
+                                        ],
+                                        "dataLinks": [],
+                                        "metrics": [],
+                                        "conditionalLinks": []
+                                    },
+                                    "taskConfigs": [
+                                        {
+                                            "alias": {
+                                                "name": null
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "IDEKO.TrainModelNN"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        }
+                                    ]
+                                },
+                                "experiment": null
+                            },
+                            {
+                                "workflow": null,
+                                "assembledWorkflow": {
+                                    "name": "TrainModelRNN",
+                                    "parentWorkflow": {
+                                        "name": "IDEKO_multi_main",
+                                        "tasks": [
+                                            {
+                                                "name": "ReadData"
+                                            },
+                                            {
+                                                "name": "TrainModel"
+                                            },
+                                            {
+                                                "name": "EvaluateModel"
+                                            },
+                                            {
+                                                "name": "PrepareData"
+                                            }
+                                        ],
+                                        "data": [],
+                                        "operators": [],
+                                        "dataConfigs": [],
+                                        "taskConfigs": [
+                                            {
+                                                "alias": {
+                                                    "name": "ReadData"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "IDEKO.ReadData"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "EvaluateModel"
+                                                },
+                                                "params": [],
+                                                "implementations": [
+                                                    {
+                                                        "workflow": null,
+                                                        "filename": "IDEKO.EvaluateModel"
+                                                    }
+                                                ],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            },
+                                            {
+                                                "alias": {
+                                                    "name": "PrepareData"
+                                                },
+                                                "params": [],
+                                                "implementations": [],
+                                                "dependencies": [],
+                                                "subTaskConfigs": [],
+                                                "metrics": []
+                                            }
+                                        ],
+                                        "nodeLinks": [
+                                            {
+                                                "started": true,
+                                                "nodes": [
+                                                    {
+                                                        "name": "ReadData"
+                                                    },
+                                                    {
+                                                        "name": "PrepareData"
+                                                    },
+                                                    {
+                                                        "name": "TrainModel"
+                                                    },
+                                                    {
+                                                        "name": "EvaluateModel"
+                                                    }
+                                                ],
+                                                "ended": true
+                                            }
+                                        ],
+                                        "dataLinks": [],
+                                        "metrics": [],
+                                        "conditionalLinks": []
+                                    },
+                                    "taskConfigs": [
+                                        {
+                                            "alias": {
+                                                "name": null
+                                            },
+                                            "params": [],
+                                            "implementations": [
+                                                {
+                                                    "workflow": null,
+                                                    "filename": "IDEKO.TrainModelRNN"
+                                                }
+                                            ],
+                                            "dependencies": [],
+                                            "subTaskConfigs": [],
+                                            "metrics": []
+                                        }
+                                    ]
+                                },
+                                "experiment": null
+                            },
+                            {
+                                "workflow": null,
+                                "assembledWorkflow": null,
+                                "experiment": {
+                                    "name": "EXP",
+                                    "intent": "FindBestClassifier",
+                                    "control": {
+                                        "expLink": [
+                                            {
+                                                "started": false,
+                                                "nodes": [
+                                                    {
+                                                        "name": "S1",
+                                                        "assembled_workflow": {
+                                                            "name": "TrainModelNN",
+                                                            "parentWorkflow": {
+                                                                "name": "IDEKO_multi_main",
+                                                                "tasks": [
+                                                                    {
+                                                                        "name": "ReadData"
+                                                                    },
+                                                                    {
+                                                                        "name": "TrainModel"
+                                                                    },
+                                                                    {
+                                                                        "name": "EvaluateModel"
+                                                                    },
+                                                                    {
+                                                                        "name": "PrepareData"
+                                                                    }
+                                                                ],
+                                                                "data": [],
+                                                                "operators": [],
+                                                                "dataConfigs": [],
+                                                                "taskConfigs": [
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "ReadData"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "IDEKO.ReadData"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "EvaluateModel"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "IDEKO.EvaluateModel"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "PrepareData"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    }
+                                                                ],
+                                                                "nodeLinks": [
+                                                                    {
+                                                                        "started": true,
+                                                                        "nodes": [
+                                                                            {
+                                                                                "name": "ReadData"
+                                                                            },
+                                                                            {
+                                                                                "name": "PrepareData"
+                                                                            },
+                                                                            {
+                                                                                "name": "TrainModel"
+                                                                            },
+                                                                            {
+                                                                                "name": "EvaluateModel"
+                                                                            }
+                                                                        ],
+                                                                        "ended": true
+                                                                    }
+                                                                ],
+                                                                "dataLinks": [],
+                                                                "metrics": [],
+                                                                "conditionalLinks": []
+                                                            },
+                                                            "taskConfigs": [
+                                                                {
+                                                                    "alias": {
+                                                                        "name": null
+                                                                    },
+                                                                    "params": [],
+                                                                    "implementations": [
+                                                                        {
+                                                                            "workflow": null,
+                                                                            "filename": "IDEKO.TrainModelNN"
+                                                                        }
+                                                                    ],
+                                                                    "dependencies": [],
+                                                                    "subTaskConfigs": [],
+                                                                    "metrics": []
+                                                                }
+                                                            ]
+                                                        },
+                                                        "strategy_name": {
+                                                            "runs": 0
+                                                        },
+                                                        "params": [
+                                                            {
+                                                                "name": "epochs_vp",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "minimum": 2,
+                                                                    "maximum": 4,
+                                                                    "step": 0
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            },
+                                                            {
+                                                                "name": "batch_size_vp",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "values": [
+                                                                        "64"
+                                                                    ]
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            }
+                                                        ],
+                                                        "tasks": [
+                                                            {
+                                                                "alias": {
+                                                                    "name": null
+                                                                },
+                                                                "params": [
+                                                                    {
+                                                                        "name": "epochs",
+                                                                        "assinged": true,
+                                                                        "value": null,
+                                                                        "otherParam": {
+                                                                            "name": "epochs_vp",
+                                                                            "assinged": true,
+                                                                            "value": {
+                                                                                "minimum": 2,
+                                                                                "maximum": 4,
+                                                                                "step": 0
+                                                                            },
+                                                                            "otherParam": null,
+                                                                            "set": false,
+                                                                            "type": null,
+                                                                            "default": null,
+                                                                            "range": null
+                                                                        },
+                                                                        "set": false,
+                                                                        "type": null,
+                                                                        "default": null,
+                                                                        "range": null
+                                                                    },
+                                                                    {
+                                                                        "name": "batch_size",
+                                                                        "assinged": true,
+                                                                        "value": null,
+                                                                        "otherParam": {
+                                                                            "name": "batch_size_vp",
+                                                                            "assinged": true,
+                                                                            "value": {
+                                                                                "values": [
+                                                                                    "64"
+                                                                                ]
+                                                                            },
+                                                                            "otherParam": null,
+                                                                            "set": false,
+                                                                            "type": null,
+                                                                            "default": null,
+                                                                            "range": null
+                                                                        },
+                                                                        "set": false,
+                                                                        "type": null,
+                                                                        "default": null,
+                                                                        "range": null
+                                                                    }
+                                                                ],
+                                                                "implementations": [],
+                                                                "dependencies": [],
+                                                                "subTaskConfigs": [],
+                                                                "metrics": []
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "name": "S2",
+                                                        "assembled_workflow": {
+                                                            "name": "TrainModelRNN",
+                                                            "parentWorkflow": {
+                                                                "name": "IDEKO_multi_main",
+                                                                "tasks": [
+                                                                    {
+                                                                        "name": "ReadData"
+                                                                    },
+                                                                    {
+                                                                        "name": "TrainModel"
+                                                                    },
+                                                                    {
+                                                                        "name": "EvaluateModel"
+                                                                    },
+                                                                    {
+                                                                        "name": "PrepareData"
+                                                                    }
+                                                                ],
+                                                                "data": [],
+                                                                "operators": [],
+                                                                "dataConfigs": [],
+                                                                "taskConfigs": [
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "ReadData"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "IDEKO.ReadData"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "EvaluateModel"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [
+                                                                            {
+                                                                                "workflow": null,
+                                                                                "filename": "IDEKO.EvaluateModel"
+                                                                            }
+                                                                        ],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    },
+                                                                    {
+                                                                        "alias": {
+                                                                            "name": "PrepareData"
+                                                                        },
+                                                                        "params": [],
+                                                                        "implementations": [],
+                                                                        "dependencies": [],
+                                                                        "subTaskConfigs": [],
+                                                                        "metrics": []
+                                                                    }
+                                                                ],
+                                                                "nodeLinks": [
+                                                                    {
+                                                                        "started": true,
+                                                                        "nodes": [
+                                                                            {
+                                                                                "name": "ReadData"
+                                                                            },
+                                                                            {
+                                                                                "name": "PrepareData"
+                                                                            },
+                                                                            {
+                                                                                "name": "TrainModel"
+                                                                            },
+                                                                            {
+                                                                                "name": "EvaluateModel"
+                                                                            }
+                                                                        ],
+                                                                        "ended": true
+                                                                    }
+                                                                ],
+                                                                "dataLinks": [],
+                                                                "metrics": [],
+                                                                "conditionalLinks": []
+                                                            },
+                                                            "taskConfigs": [
+                                                                {
+                                                                    "alias": {
+                                                                        "name": null
+                                                                    },
+                                                                    "params": [],
+                                                                    "implementations": [
+                                                                        {
+                                                                            "workflow": null,
+                                                                            "filename": "IDEKO.TrainModelRNN"
+                                                                        }
+                                                                    ],
+                                                                    "dependencies": [],
+                                                                    "subTaskConfigs": [],
+                                                                    "metrics": []
+                                                                }
+                                                            ]
+                                                        },
+                                                        "strategy_name": {
+                                                            "runs": 0
+                                                        },
+                                                        "params": [
+                                                            {
+                                                                "name": "epochs_vp",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "values": [
+                                                                        "2"
+                                                                    ]
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            },
+                                                            {
+                                                                "name": "batch_size_vp",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "values": [
+                                                                        "32"
+                                                                    ]
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            }
+                                                        ],
+                                                        "tasks": [
+                                                            {
+                                                                "alias": {
+                                                                    "name": null
+                                                                },
+                                                                "params": [
+                                                                    {
+                                                                        "name": "epochs",
+                                                                        "assinged": true,
+                                                                        "value": null,
+                                                                        "otherParam": {
+                                                                            "name": "epochs_vp",
+                                                                            "assinged": true,
+                                                                            "value": {
+                                                                                "values": [
+                                                                                    "2"
+                                                                                ]
+                                                                            },
+                                                                            "otherParam": null,
+                                                                            "set": false,
+                                                                            "type": null,
+                                                                            "default": null,
+                                                                            "range": null
+                                                                        },
+                                                                        "set": false,
+                                                                        "type": null,
+                                                                        "default": null,
+                                                                        "range": null
+                                                                    },
+                                                                    {
+                                                                        "name": "batch_size",
+                                                                        "assinged": true,
+                                                                        "value": null,
+                                                                        "otherParam": {
+                                                                            "name": "batch_size_vp",
+                                                                            "assinged": true,
+                                                                            "value": {
+                                                                                "values": [
+                                                                                    "32"
+                                                                                ]
+                                                                            },
+                                                                            "otherParam": null,
+                                                                            "set": false,
+                                                                            "type": null,
+                                                                            "default": null,
+                                                                            "range": null
+                                                                        },
+                                                                        "set": false,
+                                                                        "type": null,
+                                                                        "default": null,
+                                                                        "range": null
+                                                                    }
+                                                                ],
+                                                                "implementations": [],
+                                                                "dependencies": [],
+                                                                "subTaskConfigs": [],
+                                                                "metrics": []
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "ended": false
+                                            }
+                                        ]
+                                    },
+                                    "spaces": [
+                                        {
+                                            "name": "S1",
+                                            "assembled_workflow": {
+                                                "name": "TrainModelNN",
+                                                "parentWorkflow": {
+                                                    "name": "IDEKO_multi_main",
+                                                    "tasks": [
+                                                        {
+                                                            "name": "ReadData"
+                                                        },
+                                                        {
+                                                            "name": "TrainModel"
+                                                        },
+                                                        {
+                                                            "name": "EvaluateModel"
+                                                        },
+                                                        {
+                                                            "name": "PrepareData"
+                                                        }
+                                                    ],
+                                                    "data": [],
+                                                    "operators": [],
+                                                    "dataConfigs": [],
+                                                    "taskConfigs": [
+                                                        {
+                                                            "alias": {
+                                                                "name": "ReadData"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "IDEKO.ReadData"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "EvaluateModel"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "IDEKO.EvaluateModel"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "PrepareData"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        }
+                                                    ],
+                                                    "nodeLinks": [
+                                                        {
+                                                            "started": true,
+                                                            "nodes": [
+                                                                {
+                                                                    "name": "ReadData"
+                                                                },
+                                                                {
+                                                                    "name": "PrepareData"
+                                                                },
+                                                                {
+                                                                    "name": "TrainModel"
+                                                                },
+                                                                {
+                                                                    "name": "EvaluateModel"
+                                                                }
+                                                            ],
+                                                            "ended": true
+                                                        }
+                                                    ],
+                                                    "dataLinks": [],
+                                                    "metrics": [],
+                                                    "conditionalLinks": []
+                                                },
+                                                "taskConfigs": [
+                                                    {
+                                                        "alias": {
+                                                            "name": null
+                                                        },
+                                                        "params": [],
+                                                        "implementations": [
+                                                            {
+                                                                "workflow": null,
+                                                                "filename": "IDEKO.TrainModelNN"
+                                                            }
+                                                        ],
+                                                        "dependencies": [],
+                                                        "subTaskConfigs": [],
+                                                        "metrics": []
+                                                    }
+                                                ]
+                                            },
+                                            "strategy_name": {
+                                                "runs": 0
+                                            },
+                                            "params": [
+                                                {
+                                                    "name": "epochs_vp",
+                                                    "assinged": true,
+                                                    "value": {
+                                                        "minimum": 2,
+                                                        "maximum": 4,
+                                                        "step": 0
+                                                    },
+                                                    "otherParam": null,
+                                                    "set": false,
+                                                    "type": null,
+                                                    "default": null,
+                                                    "range": null
+                                                },
+                                                {
+                                                    "name": "batch_size_vp",
+                                                    "assinged": true,
+                                                    "value": {
+                                                        "values": [
+                                                            "64"
+                                                        ]
+                                                    },
+                                                    "otherParam": null,
+                                                    "set": false,
+                                                    "type": null,
+                                                    "default": null,
+                                                    "range": null
+                                                }
+                                            ],
+                                            "tasks": [
+                                                {
+                                                    "alias": {
+                                                        "name": null
+                                                    },
+                                                    "params": [
+                                                        {
+                                                            "name": "epochs",
+                                                            "assinged": true,
+                                                            "value": null,
+                                                            "otherParam": {
+                                                                "name": "epochs_vp",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "minimum": 2,
+                                                                    "maximum": 4,
+                                                                    "step": 0
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            },
+                                                            "set": false,
+                                                            "type": null,
+                                                            "default": null,
+                                                            "range": null
+                                                        },
+                                                        {
+                                                            "name": "batch_size",
+                                                            "assinged": true,
+                                                            "value": null,
+                                                            "otherParam": {
+                                                                "name": "batch_size_vp",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "values": [
+                                                                        "64"
+                                                                    ]
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            },
+                                                            "set": false,
+                                                            "type": null,
+                                                            "default": null,
+                                                            "range": null
+                                                        }
+                                                    ],
+                                                    "implementations": [],
+                                                    "dependencies": [],
+                                                    "subTaskConfigs": [],
+                                                    "metrics": []
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "S2",
+                                            "assembled_workflow": {
+                                                "name": "TrainModelRNN",
+                                                "parentWorkflow": {
+                                                    "name": "IDEKO_multi_main",
+                                                    "tasks": [
+                                                        {
+                                                            "name": "ReadData"
+                                                        },
+                                                        {
+                                                            "name": "TrainModel"
+                                                        },
+                                                        {
+                                                            "name": "EvaluateModel"
+                                                        },
+                                                        {
+                                                            "name": "PrepareData"
+                                                        }
+                                                    ],
+                                                    "data": [],
+                                                    "operators": [],
+                                                    "dataConfigs": [],
+                                                    "taskConfigs": [
+                                                        {
+                                                            "alias": {
+                                                                "name": "ReadData"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "IDEKO.ReadData"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "EvaluateModel"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [
+                                                                {
+                                                                    "workflow": null,
+                                                                    "filename": "IDEKO.EvaluateModel"
+                                                                }
+                                                            ],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        },
+                                                        {
+                                                            "alias": {
+                                                                "name": "PrepareData"
+                                                            },
+                                                            "params": [],
+                                                            "implementations": [],
+                                                            "dependencies": [],
+                                                            "subTaskConfigs": [],
+                                                            "metrics": []
+                                                        }
+                                                    ],
+                                                    "nodeLinks": [
+                                                        {
+                                                            "started": true,
+                                                            "nodes": [
+                                                                {
+                                                                    "name": "ReadData"
+                                                                },
+                                                                {
+                                                                    "name": "PrepareData"
+                                                                },
+                                                                {
+                                                                    "name": "TrainModel"
+                                                                },
+                                                                {
+                                                                    "name": "EvaluateModel"
+                                                                }
+                                                            ],
+                                                            "ended": true
+                                                        }
+                                                    ],
+                                                    "dataLinks": [],
+                                                    "metrics": [],
+                                                    "conditionalLinks": []
+                                                },
+                                                "taskConfigs": [
+                                                    {
+                                                        "alias": {
+                                                            "name": null
+                                                        },
+                                                        "params": [],
+                                                        "implementations": [
+                                                            {
+                                                                "workflow": null,
+                                                                "filename": "IDEKO.TrainModelRNN"
+                                                            }
+                                                        ],
+                                                        "dependencies": [],
+                                                        "subTaskConfigs": [],
+                                                        "metrics": []
+                                                    }
+                                                ]
+                                            },
+                                            "strategy_name": {
+                                                "runs": 0
+                                            },
+                                            "params": [
+                                                {
+                                                    "name": "epochs_vp",
+                                                    "assinged": true,
+                                                    "value": {
+                                                        "values": [
+                                                            "2"
+                                                        ]
+                                                    },
+                                                    "otherParam": null,
+                                                    "set": false,
+                                                    "type": null,
+                                                    "default": null,
+                                                    "range": null
+                                                },
+                                                {
+                                                    "name": "batch_size_vp",
+                                                    "assinged": true,
+                                                    "value": {
+                                                        "values": [
+                                                            "32"
+                                                        ]
+                                                    },
+                                                    "otherParam": null,
+                                                    "set": false,
+                                                    "type": null,
+                                                    "default": null,
+                                                    "range": null
+                                                }
+                                            ],
+                                            "tasks": [
+                                                {
+                                                    "alias": {
+                                                        "name": null
+                                                    },
+                                                    "params": [
+                                                        {
+                                                            "name": "epochs",
+                                                            "assinged": true,
+                                                            "value": null,
+                                                            "otherParam": {
+                                                                "name": "epochs_vp",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "values": [
+                                                                        "2"
+                                                                    ]
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            },
+                                                            "set": false,
+                                                            "type": null,
+                                                            "default": null,
+                                                            "range": null
+                                                        },
+                                                        {
+                                                            "name": "batch_size",
+                                                            "assinged": true,
+                                                            "value": null,
+                                                            "otherParam": {
+                                                                "name": "batch_size_vp",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "values": [
+                                                                        "32"
+                                                                    ]
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            },
+                                                            "set": false,
+                                                            "type": null,
+                                                            "default": null,
+                                                            "range": null
+                                                        }
+                                                    ],
+                                                    "implementations": [],
+                                                    "dependencies": [],
+                                                    "subTaskConfigs": [],
+                                                    "metrics": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "events": []
+                                }
+                            }
+                        ]
+                    },
+                    "task": null
+                }
+            },
+            "processing": {
+                "workflow": [
+                    {
+                        "workflowId": "jpa-mJQBZTyxy1ACY1VE",
+                        "tasks": [
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "ReadData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "X41",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "ReadData",
+                                "start": "2025-01-24T15:36:58Z",
+                                "end": "2025-01-24T15:37:06Z",
+                                "id": "ReadData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/ReadData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "ExternalDataFile",
+                                        "uri": "exp_engine/library-datasets/v1/ideko-subset/**"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "AddPadding"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "AddPadding",
+                                "start": "2025-01-24T15:37:08Z",
+                                "end": "2025-01-24T15:37:13Z",
+                                "id": "AddPadding",
+                                "source_code": "exp_engine/library-tasks/IDEKO/AddPadding/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "X2",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "SplitData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "Timestamps42",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "SplitData",
+                                "start": "2025-01-24T15:37:14Z",
+                                "end": "2025-01-24T15:37:21Z",
+                                "id": "SplitData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/SplitData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "TrainModelNN"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "TrainedModelFolder",
+                                        "uri": "exp_engine/library-datasets/output/trained_model/**"
+                                    },
+                                    {
+                                        "name": "OutputFolder",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Timestamps",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "TrainModel",
+                                "start": "2025-01-24T15:37:22Z",
+                                "end": "2025-01-24T15:37:38Z",
+                                "id": "TrainModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                                "parameters": [
+                                    {
+                                        "name": "epochs",
+                                        "type": "integer",
+                                        "value": "2"
+                                    },
+                                    {
+                                        "name": "batch_size",
+                                        "type": "integer",
+                                        "value": "64"
+                                    }
+                                ],
+                                "input_datasets": [
+                                    {
+                                        "name": "Timestamps",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "EvaluateModel"
+                                },
+                                "name": "EvaluateModel",
+                                "start": "2025-01-24T15:37:38Z",
+                                "end": "2025-01-24T15:37:48Z",
+                                "id": "EvaluateModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/EvaluateModel/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "OutputFolder",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Timestamps2",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    }
+                                ]
+                            }
+                        ],
+                        "status": "completed"
+                    },
+                    {
+                        "workflowId": "kpa-mJQBZTyxy1ACZlWa",
+                        "tasks": [
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "ReadData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "X41",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "ReadData",
+                                "start": "2025-01-24T15:38:54Z",
+                                "end": "2025-01-24T15:39:02Z",
+                                "id": "ReadData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/ReadData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "ExternalDataFile",
+                                        "uri": "exp_engine/library-datasets/v1/ideko-subset/**"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "AddPadding"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "AddPadding",
+                                "start": "2025-01-24T15:39:04Z",
+                                "end": "2025-01-24T15:39:11Z",
+                                "id": "AddPadding",
+                                "source_code": "exp_engine/library-tasks/IDEKO/AddPadding/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "X2",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "SplitData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "Timestamps42",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "SplitData",
+                                "start": "2025-01-24T15:39:11Z",
+                                "end": "2025-01-24T15:39:18Z",
+                                "id": "SplitData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/SplitData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "TrainModelNN"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "TrainedModelFolder",
+                                        "uri": "exp_engine/library-datasets/output/trained_model/**"
+                                    },
+                                    {
+                                        "name": "OutputFolder",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Timestamps",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "TrainModel",
+                                "start": "2025-01-24T15:39:19Z",
+                                "end": "2025-01-24T15:39:33Z",
+                                "id": "TrainModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                                "parameters": [
+                                    {
+                                        "name": "epochs",
+                                        "type": "integer",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "name": "batch_size",
+                                        "type": "integer",
+                                        "value": "64"
+                                    }
+                                ],
+                                "input_datasets": [
+                                    {
+                                        "name": "Timestamps",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "EvaluateModel"
+                                },
+                                "name": "EvaluateModel",
+                                "start": "2025-01-24T15:39:36Z",
+                                "end": "2025-01-24T15:39:43Z",
+                                "id": "EvaluateModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/EvaluateModel/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "OutputFolder",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Timestamps2",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    }
+                                ]
+                            }
+                        ],
+                        "status": "completed"
+                    },
+                    {
+                        "workflowId": "lpbBmJQBZTyxy1ACT1Vs",
+                        "tasks": [
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "ReadData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "X41",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "ReadData",
+                                "start": "2025-01-24T15:40:12Z",
+                                "end": "2025-01-24T15:40:20Z",
+                                "id": "ReadData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/ReadData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "ExternalDataFile",
+                                        "uri": "exp_engine/library-datasets/v1/ideko-subset/**"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "AddPadding"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "AddPadding",
+                                "start": "2025-01-24T15:40:20Z",
+                                "end": "2025-01-24T15:40:30Z",
+                                "id": "AddPadding",
+                                "source_code": "exp_engine/library-tasks/IDEKO/AddPadding/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "X2",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "SplitData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "Timestamps42",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "SplitData",
+                                "start": "2025-01-24T15:40:31Z",
+                                "end": "2025-01-24T15:40:40Z",
+                                "id": "SplitData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/SplitData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "TrainModelRNN"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "TrainedModelFolder",
+                                        "uri": "exp_engine/library-datasets/output/trained_model/**"
+                                    },
+                                    {
+                                        "name": "OutputFolder",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Timestamps",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "TrainModel",
+                                "start": "2025-01-24T15:40:41Z",
+                                "end": "2025-01-24T15:42:24Z",
+                                "id": "TrainModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/TrainModelRNN/task.py",
+                                "parameters": [
+                                    {
+                                        "name": "epochs",
+                                        "type": "integer",
+                                        "value": "2"
+                                    },
+                                    {
+                                        "name": "batch_size",
+                                        "type": "integer",
+                                        "value": "32"
+                                    }
+                                ],
+                                "input_datasets": [
+                                    {
+                                        "name": "Timestamps",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "EvaluateModel"
+                                },
+                                "name": "EvaluateModel",
+                                "start": "2025-01-24T15:42:25Z",
+                                "end": "2025-01-24T15:42:38Z",
+                                "id": "EvaluateModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/EvaluateModel/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "OutputFolder",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Timestamps2",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": ""
+                                    }
+                                ]
+                            }
+                        ],
+                        "status": "completed"
+                    }
+                ],
+                "features": [
+                    "Features",
+                    "Features",
+                    "Features"
+                ]
+            }
+        },
+        "evaluation": {
+            "runMetrics": [
+                {
+                    "metricId": "j5a-mJQBZTyxy1ACZFUG",
+                    "name": "IDEKO_accuracy",
+                    "semantic_type": "ML_Accuracy",
+                    "type": "double",
+                    "records": "0.5",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "kJa-mJQBZTyxy1ACZFXY",
+                    "name": "IDEKO_loss",
+                    "semantic_type": null,
+                    "type": "double",
+                    "records": "65.12580871582031",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "kZa-mJQBZTyxy1ACZVW2",
+                    "name": "IDEKO_recall",
+                    "semantic_type": "ML_Recall",
+                    "type": "double",
+                    "records": "1.0",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "k5a-mJQBZTyxy1ACZ1Wn",
+                    "name": "IDEKO_accuracy",
+                    "semantic_type": "ML_Accuracy",
+                    "type": "double",
+                    "records": "0.5",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "lJa-mJQBZTyxy1ACaFWO",
+                    "name": "IDEKO_loss",
+                    "semantic_type": null,
+                    "type": "double",
+                    "records": "30.309814453125",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "lZa-mJQBZTyxy1ACaVWa",
+                    "name": "IDEKO_recall",
+                    "semantic_type": "ML_Recall",
+                    "type": "double",
+                    "records": "1.0",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "l5bBmJQBZTyxy1ACUFVU",
+                    "name": "IDEKO_accuracy",
+                    "semantic_type": "ML_Accuracy",
+                    "type": "double",
+                    "records": "0.5",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "mJbBmJQBZTyxy1ACUVU_",
+                    "name": "IDEKO_loss",
+                    "semantic_type": null,
+                    "type": "double",
+                    "records": "0.8628306984901428",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "mZbBmJQBZTyxy1ACUlU8",
+                    "name": "IDEKO_recall",
+                    "semantic_type": "ML_Recall",
+                    "type": "double",
+                    "records": "1.0",
+                    "aggregation": {}
+                }
+            ],
+            "metrics": [
+                "ML_Accuracy",
+                "ML_Recall",
+                "ML_Accuracy",
+                "ML_Recall",
+                "ML_Accuracy",
+                "ML_Recall"
+            ]
+        }
+    }
+}

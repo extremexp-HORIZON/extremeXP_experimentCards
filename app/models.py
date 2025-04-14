@@ -79,7 +79,7 @@ class EvaluationMetric(db.Model):
     __tablename__ = 'evaluation_metrics'
     metric_id = db.Column(db.String)
     name = db.Column(db.String)
-    value = db.Column(db.Float)
+    value = db.Column(db.String)
     experiment_id = db.Column(db.String, db.ForeignKey('experiments.experiment_id'))
 
     experiment = db.relationship("Experiment", back_populates="evaluation_metrics")
