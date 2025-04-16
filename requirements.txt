@@ -3,3 +3,4 @@ requests
 psycopg2-binary
 sqlalchemy
 flask_sqlalchemy
+flask-swagger-ui

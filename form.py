@@ -13,6 +13,12 @@ import logging
 from http.client import HTTPException
 
 logging.basicConfig(level=logging.DEBUG)
+from flask_swagger_ui import get_swaggerui_blueprint
+
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swagger.yaml'  # Path to your Swagger YAML file
+swaggerui_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL)
+
 
 def create_app():
     app = Flask(__name__)
@@ -28,6 +34,7 @@ def create_app():
             print(f"Error populating database: {str(e)}")
     return app, db
 app, db = create_app()
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 
 ACCESS_TOKEN = "af880f22386d22f93e67a890bab7ebf2613b60e6"

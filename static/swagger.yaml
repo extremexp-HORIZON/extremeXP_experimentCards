@@ -1,0 +1,207 @@
+openapi: 3.0.0
+info:
+  title: Experiment Cards API
+  version: 1.0.0
+  description: API for managing experiment cards.
+
+paths:
+  /newExperiment/{experiment_id}:
+    post:
+      summary: Fetch experiment data and save into experiment card
+      description: Fetches experiment data from DAL, saves it as an experiment card, and returns the result of the operation.
+      tags:
+        - Experiments
+      parameters:
+        - name: experiment_id
+          in: path
+          required: true
+          description: The ID of the experiment.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Experiment data fetched and saved in experiment card successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Experiment data saved successfully in experiment card.
+        '404':
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Experiment not found.
+        '500':
+          description: Failed to save experiment data in card.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to save experiment data [error details]
+      requestBody:
+        description: No request body is required for this endpoint.
+        required: false
+  /updateExperiment/{experiment_id}:
+    post:
+      summary: Update experiment data
+      description: Fetches updated experiment data from an external API and updates it in the experiment card.
+      tags:
+        - Experiments
+      parameters:
+        - name: experiment_id
+          in: path
+          required: true
+          description: The ID of the experiment to update.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Experiment data updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Experiment data updated successfully.
+        '404':
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Experiment not found.
+        '500':
+          description: Failed to update experiment data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to update experiment data [error details]
+      requestBody:
+        description: No request body is required for this endpoint.
+        required: false
+  /form_lessons_learnt/{experiment_id}:
+    get:
+      summary: Display the lessons learnt form
+      description: Displays a form for submitting lessons learnt, experiment ratings, and run ratings for a specific experiment.
+      tags:
+        - Lessons Learnt
+      parameters:
+        - name: experiment_id
+          in: path
+          required: true
+          description: The ID of the experiment for which the form is displayed.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lessons learnt form displayed successfully.
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "<html>...</html>"
+        '404':
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Experiment not found.
+
+  /submit/{experiment_id}:
+    post:
+      summary: Submit lessons learnt and ratings
+      description: Submits lessons learnt, experiment ratings, and run ratings for a specific experiment.
+      tags:
+        - Lessons Learnt
+      parameters:
+        - name: experiment_id
+          in: path
+          required: true
+          description: The ID of the experiment for which the data is submitted.
+          schema:
+            type: string
+      requestBody:
+        description: Form data containing lessons learnt, experiment ratings, and run ratings.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                lessonsLearnt:
+                  type: string
+                  description: Lessons learnt from the experiment.
+                  example: "We learned that X improves Y."
+                experimentRating:
+                  type: integer
+                  description: Rating for the experiment (1-7).
+                  example: 5
+                runRatings:
+                  type: string
+                  description: Comma-separated ratings for individual runs (1-7).
+                  example: "5,4,6"
+      responses:
+        '200':
+          description: Data submitted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Data submitted successfully.
+        '400':
+          description: Invalid input data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid input data.
+        '404':
+          description: Experiment not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Experiment not found.
+        '500':
+          description: Failed to submit data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to submit data [error details].
