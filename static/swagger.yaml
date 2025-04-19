@@ -205,3 +205,94 @@ paths:
                   error:
                     type: string
                     example: Failed to submit data [error details].
+  /query_experiments_page:
+    get:
+      summary: Fetch all experiments
+      description: Fetches all experiments from the database without applying any filters.
+      tags:
+        - Experiments
+      responses:
+        '200':
+          description: Experiments fetched successfully.
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "<html>...</html>"
+        '500':
+          description: Failed to fetch experiments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to fetch experiments due to a server error."
+    post:
+      summary: Query experiments with filters
+      description: Fetches experiments based on the provided filters such as experiment name, intent, start date, end date, algorithm, and metric name.
+      tags:
+        - Experiments
+      requestBody:
+        description: Filters for querying experiments.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                experiment_name:
+                  type: string
+                  description: The name of the experiment to filter by.
+                  example: "Experiment 1"
+                intent:
+                  type: string
+                  description: The intent of the experiment to filter by.
+                  example: "Classification"
+                start_date:
+                  type: string
+                  format: date
+                  description: The start date of the experiment to filter by.
+                  example: "2025-04-01"
+                end_date:
+                  type: string
+                  format: date
+                  description: The end date of the experiment to filter by.
+                  example: "2025-04-30"
+                algorithm:
+                  type: string
+                  description: The algorithm used in the experiment to filter by.
+                  example: "SVM"
+                metric_name:
+                  type: string
+                  description: The name of the metric to filter by.
+                  example: "Accuracy"
+      responses:
+        '200':
+          description: Experiments fetched successfully.
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "<html>...</html>"
+        '400':
+          description: Invalid filter values provided.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid filter values."
+        '500':
+          description: Failed to fetch experiments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to fetch experiments due to a server error."

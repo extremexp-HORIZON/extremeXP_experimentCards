@@ -346,7 +346,7 @@ def query_example_new():
 
     return render_template('form_example_new.html', results=results)
 
-@app.route('/query_example_new_sqlalchemy', methods=['GET', 'POST'])
+@app.route('/query_experiments_page', methods=['GET', 'POST'])
 def query_example_new_sqlalchemy():
     results = []
     filters = {}
@@ -355,7 +355,6 @@ def query_example_new_sqlalchemy():
         # Get filter values from the form
         experiment_name = request.form.get('experiment_name')
         intent = request.form.get('intent')
-        print("Intent Filter Value:", intent)  # Debugging: Check the value of intent
         start_date = request.form.get('start_date')
         end_date = request.form.get('end_date')
         algorithm = request.form.get('algorithm')
