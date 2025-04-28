@@ -24,9 +24,10 @@ services:
       - .:/app  
       - ./uploads:/app/uploads  
     environment:
-      FLASK_ENV: development 
-       - DATABASE_URL=postgresql://user:password@postgres:5432/experiments
-       - UPLOAD_FOLDER=/app/uploads  
+     - ACCESS_TOKEN=${ACCESS_TOKEN}
+     - DATABASE_URL=postgresql://user:password@postgres:5432/experiments
+     - UPLOAD_FOLDER=/app/uploads  
+     - FLASK_ENV=development
     depends_on:
       - postgres
     networks:

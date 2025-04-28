@@ -27,7 +27,6 @@ def load_and_insert(db):
                     db.session.add(experiment)
                     print(experiment)
 
-                    # Constraints
                     for c in card.get("constraints", []):
                         db.session.add(ExperimentConstraint(
                             id=c["id"],
@@ -36,9 +35,7 @@ def load_and_insert(db):
                             how=c["how"],
                             experiment=experiment
                         ))
-                  
 
-                    # Requirements
                     for r in card.get("requirements", []):
                         db.session.add(ExperimentRequirement(
                             id=r["id"],
@@ -48,8 +45,6 @@ def load_and_insert(db):
                             experiment=experiment
                         ))
                    
-                   
-                    # Variability - Dataset
                     if "dataSet" in card.get("variabilityPoints", {}):
                         d = card["variabilityPoints"]["dataSet"]
                         db.session.add(ExperimentDataset(
@@ -60,7 +55,6 @@ def load_and_insert(db):
                             experiment=experiment
                         ))
 
-                    # Variability - Model
                     if "model" in card.get("variabilityPoints", {}):
                         m = card["variabilityPoints"]["model"]
                         db.session.add(ExperimentModel(
@@ -77,6 +71,7 @@ def load_and_insert(db):
                             name=em["name"],
                             value=em["value"],
                         ))
+
         for i in range(1, 21):
             exp_id = f"exp_{i}"
             lesson_id = f"lessons_learnt_{i}"
@@ -90,7 +85,6 @@ def load_and_insert(db):
                 experiment_rating=rating,
                 run_rating=run_ratings,
                 experiment_id=exp_id
-            ))
-        
+            ))      
 
         db.session.commit()

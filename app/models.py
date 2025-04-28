@@ -33,7 +33,6 @@ class ExperimentConstraint(db.Model):
         db.PrimaryKeyConstraint('id', 'experiment_id'),
     )
 
-
 class ExperimentRequirement(db.Model):
     __tablename__ = 'experiment_requirements'
     id = db.Column(db.String)
@@ -46,8 +45,6 @@ class ExperimentRequirement(db.Model):
     __table_args__ = (
         db.PrimaryKeyConstraint('id', 'experiment_id'),
     )
-
-
 
 class ExperimentDataset(db.Model):
     __tablename__ = 'experiment_datasets'
