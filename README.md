@@ -1,4 +1,4 @@
-# Flask ExtremeXP Application
+#  ExtremeXP Experiment Cards Component
 
 This is a Flask-based web application designed for Experiment Card management, query and user feedback insertion. The project includes Swagger integration for API documentation and front-end interfaces for user interaction (a form for lessons learnt user feedback for expeiments and a page for viewing, managing and querying the experiment cards).
 
