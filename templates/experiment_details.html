@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            color: white;
+            font-weight: bold;
+        }
+        .card-header.general {
+            background-color: #007bff;
+        }
+        .card-header.requirements {
+            background-color: #28a745;
+        }
+        .card-header.models {
+            background-color: #ffc107;
+        }
+        .card-header.datasets {
+            background-color: #17a2b8;
+        }
+        .card-header.lessons {
+            background-color: #6f42c1;
+        }
+        .btn-back {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Experiment Card</h1>
+
+        <!-- General Information -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header general">General Information</div>
+                    <div class="card-body">
+                        <p><strong>Experiment Name:</strong> {{ experiment.experiment_name }}</p>
+                        <p><strong>Intent:</strong> {{ experiment.intent }}</p>
+                        <p><strong>Start Date:</strong> {{ experiment.experiment_start }}</p>
+                        <p><strong>End Date:</strong> {{ experiment.experiment_end }}</p>
+                        <p><strong>Status:</strong> {{ experiment.status }}</p>
+                        <p><strong>Collaborators:</strong> {{ experiment.collaborators }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requirements -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header requirements">Requirements</div>
+                    <div class="card-body">
+                        {% if requirements %}
+                            <ul>
+                                {% for req in requirements %}
+                                    <li>
+                                        <strong>Metric:</strong> {{ req.metric }},
+                                        <strong>Method:</strong> {{ req.method }},
+                                        <strong>Objective:</strong> {{ req.objective }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No requirements available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Models and Datasets -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header models">Models</div>
+                    <div class="card-body">
+                        {% if models %}
+                            <ul>
+                                {% for model in models %}
+                                    <li>
+                                        <strong>Algorithm:</strong> {{ model.algorithm }},
+                                        <strong>Parameter:</strong> {{ model.parameter }},
+                                        <strong>Value:</strong> {{ model.parameter_value }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No models available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header datasets">Datasets</div>
+                    <div class="card-body">
+                        {% if datasets %}
+                            <ul>
+                                {% for dataset in datasets %}
+                                    <li>
+                                        <strong>Dataset Name:</strong> {{ dataset.name }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No datasets available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lessons Learnt -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header lessons">Lessons Learnt</div>
+                    <div class="card-body">
+                        {% if lessons %}
+                            {% for lesson in lessons %}
+                                <p><strong>Lessons:</strong> {{ lesson.lessons_learnt }}</p>
+                                <p><strong>Experiment Rating:</strong> {{ lesson.experiment_rating }}</p>
+                                <p><strong>Run Ratings:</strong> {{ lesson.run_rating }}</p>
+                            {% endfor %}
+                        {% else %}
+                            <p>No lessons learnt available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="/query_experiments_page" class="btn btn-primary btn-back">Back to Experiments</a>
+        </div>
+    </div>
+</body>
+</html>

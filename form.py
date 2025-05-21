@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 from flask_swagger_ui import get_swaggerui_blueprint
 
 SWAGGER_URL = '/swagger'
-API_URL = '/static/swagger.yaml'  # Path to your Swagger YAML file
+API_URL = '/static/swagger.yaml'  
 swaggerui_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL)
 
 
@@ -67,14 +67,38 @@ def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", 
             logging.info("Response JSON:", response.json()) 
             return {"success": True, "data": response.json()}
         
-        # Handle unexpected status codes
         logging.info(f"Unexpected status code: {response.status_code} - {response.text}")
         return {"success": False, "error": f"Unexpected status code: {response.status_code}"}
     
     except requests.exceptions.RequestException as e:
-        # Log the error and return a failure response
         logging.info(f"Error during API call: {e}")
         return {"success": False, "error": str(e)}
+    
+
+@app.route('/experiment_details/<experiment_id>', methods=['GET'])
+def experiment_details(experiment_id):
+    experiment = Experiment.query.get_or_404(experiment_id)
+    
+
+    requirements = ExperimentRequirement.query.filter_by(experiment_id=experiment_id).all()
+    models = ExperimentModel.query.filter_by(experiment_id=experiment_id).all()
+    datasets = ExperimentDataset.query.filter_by(experiment_id=experiment_id).all()
+    lessons = LessonLearnt.query.filter_by(experiment_id=experiment_id).all()
+
+    logging.info("Experiment: %s", str(experiment))
+    logging.info("Requirements:%s", str( requirements))
+    logging.info("Models: %s", str(models))
+    logging.info("Datasets: %s", str( datasets))
+    logging.info("Lessons: %s", str( lessons))
+
+    return render_template(
+        'experiment_details.html',
+        experiment=experiment,
+        requirements=requirements,
+        models=models,
+        datasets=datasets,
+        lessons=lessons
+    )
 
 @app.route("/form_lessons_learnt/<experiment_id>", methods=["GET"])
 def form(experiment_id):
@@ -520,7 +544,6 @@ def update_experiment(experiment_id):
         return jsonify({"message": f"Experiment data saved successfully to {file_path}"}), 200
     except Exception as e:
         return jsonify({"error": f"Failed to save experiment data: {str(e)}"}), 500
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
