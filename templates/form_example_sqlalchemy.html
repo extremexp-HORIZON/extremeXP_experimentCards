@@ -131,10 +131,9 @@
                     </td>
                     <td>{{ group[0].status }}</td>
                     <td>
-                        Experiment ID: {{ group[0].experiment_id }}
-                        <a href="{{ url_for('experiment_details', experiment_id=group[0].experiment_id) }}" class="btn btn-sm btn-info">
+                        <button type="button" class="btn btn-info btn-sm view-details-btn" data-experiment-id="{{ group[0].experiment_id }}">
                             View Details
-                        </a>
+                        </button>
                     </td>
                     <td>
                         <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#details-{{ group[0].experiment_id }}" aria-expanded="false" aria-controls="details-{{ group[0].experiment_id }}">
@@ -168,6 +167,48 @@
             </tbody>
         </table>
     </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Experiment Card</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-content-placeholder">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.view-details-btn').on('click', function () {
+                const experimentId = $(this).data('experiment-id');
+                const modalContentPlaceholder = $('#modal-content-placeholder');
+
+                // Clear previous content and show loading message
+                modalContentPlaceholder.html('<p>Loading...</p>');
+
+                // Load content dynamically
+                $.get(`/experiment_details/${experimentId}`, function (data) {
+                    modalContentPlaceholder.html(data);
+                });
+
+                // Show the modal
+                $('#detailsModal').modal('show');
+            });
+        });
+    </script>
+    
 </body>
 </html>
