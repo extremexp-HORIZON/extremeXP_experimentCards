@@ -60,10 +60,14 @@ Before running the application, ensure you have the Docker installed.
 
 ## Front-End Screenshots
 One core interface is a form-based feedback submission page, designed to collect user feedback immediately after the execution of an experiment
+
+
 <img width="220" height="283" alt="image" src="https://github.com/user-attachments/assets/a7f8185d-2f32-4ceb-9fa9-39242f7483d3" />
 
 
 Complementing this form, we have developed a centralized page for Experiment Cards, where users can browse, search, and filter documented experiments 
+
+
 <img width="280" height="198" alt="image" src="https://github.com/user-attachments/assets/ea7e89f0-6919-4292-a093-c6a2b6a01611" />
 
 
