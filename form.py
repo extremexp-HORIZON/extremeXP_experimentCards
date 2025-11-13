@@ -46,7 +46,8 @@ ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 if not ACCESS_TOKEN:
     raise EnvironmentError("ACCESS_TOKEN environment variable is not set.")
 EXPERIMENT_ID = "jZa-mJQBZTyxy1ACX1W8"
-BASE_URL = "https://api.expvis.smartarch.cz/api"
+# BASE_URL = "https://api.expvis.smartarch.cz/api"
+BASE_URL = "https://api.dal.extremexp-icom.intracom-telecom.com/api"
 
 
 def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", parent_type="experiment"):
@@ -74,6 +75,62 @@ def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", 
         logging.info(f"Error during API call: {e}")
         return {"success": False, "error": str(e)}
     
+@app.after_request
+def add_header(response):
+    # Allow embedding in iframes
+    response.headers['X-Frame-Options'] = 'ALLOWALL'
+    return response
+@app.route('/')
+def embed_test():
+    return render_template('embed_test.html')
+@app.route('/experiment_details_realData/<experiment_id>', methods=['GET'])
+def experiment_details_realData(experiment_id):
+    experiment = Experiment.query.get_or_404(experiment_id)
+    
+
+    requirements = ExperimentRequirement.query.filter_by(experiment_id=experiment_id).all()
+    models = ExperimentModel.query.filter_by(experiment_id=experiment_id).all()
+    datasets = ExperimentDataset.query.filter_by(experiment_id=experiment_id).all()
+    lessons = LessonLearnt.query.filter_by(experiment_id=experiment_id).all()
+
+   
+    experiment_model = ExperimentModel.query.filter_by(experiment_id=experiment_id).all()
+    evaluation = EvaluationMetric.query.filter_by(experiment_id=experiment_id).all()
+
+    logging.info("Experiment: %s", str(experiment))
+    logging.info("Requirements:%s", str( requirements))
+    logging.info("Models: %s", str(models))
+    logging.info("Datasets: %s", str( datasets))
+    logging.info("Lessons: %s", str( lessons))
+    for eval in evaluation:
+        logging.info(vars(eval))
+    #
+ # Log all information in models
+    logging.info("Models:")
+    for model in experiment_model:
+        logging.info(vars(model))  # Logs all attributes of the model object
+
+    # Log all information in datasets
+    logging.info("Datasets:")
+    for dataset in datasets:
+        logging.info(vars(dataset))  # Logs all attributes of the dataset object
+
+    variabilityPoints = {
+        "dataSet": datasets,
+        "model": models
+    }
+    logging.info("Variability Points: %s", str( variabilityPoints))
+
+    return render_template(
+        'experiment_details_realData.html',
+        experiment=experiment,
+        requirements=requirements,
+        models=models,
+        datasets=datasets,
+        lessons=lessons,
+        variabilityPoints=variabilityPoints,
+        evaluation=evaluation
+    )
 
 @app.route('/experiment_details/<experiment_id>', methods=['GET'])
 def experiment_details(experiment_id):
@@ -91,13 +148,40 @@ def experiment_details(experiment_id):
     logging.info("Datasets: %s", str( datasets))
     logging.info("Lessons: %s", str( lessons))
 
+
+    variabilityPoints = {
+        "dataSet": {
+            "name": "Example Dataset",
+            "zenoh_key_expr": "example_key",
+            "reviewer_score": 85
+        },
+        "model": {
+            "algorithm": ["Algorithm1", "Algorithm2"],
+            "parameters": ["Param1", "Param2"]
+        },
+        "processing": {
+            "workflow": [
+                {
+                    "workflowId": "Workflow1",
+                    "tasks": [{"name": "Task1"}, {"name": "Task2"}]
+                }
+            ]
+        }
+    }
+    evaluation = {
+        "metrics": ["Metric1", "Metric2"],
+        "runMetrics": ["RunMetric1", "RunMetric2"]
+    }
+
     return render_template(
         'experiment_details.html',
         experiment=experiment,
         requirements=requirements,
         models=models,
         datasets=datasets,
-        lessons=lessons
+        lessons=lessons,
+        variabilityPoints=variabilityPoints,
+        evaluation=evaluation
     )
 
 @app.route("/form_lessons_learnt/<experiment_id>", methods=["GET"])
@@ -196,7 +280,7 @@ def submit_form(experiment_id):
         return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg="An unexpected error occurred. Please try again later."))
 
 @app.route('/query_experiments_page', methods=['GET', 'POST'])
-def query_example_new_sqlalchemy():
+def query_experiments_page():
     results = []
     filters = {}
 

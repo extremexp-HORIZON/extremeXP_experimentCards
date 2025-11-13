@@ -48,7 +48,7 @@
 <body>
 
     <div class="container mt-5">
-        <h1 class="mb-4 text-center">Experiment Card for moby-exp1</h1>
+        <h1 class="mb-4 text-center">Experiment Card for {{experiment.experiment_name}}</h1>
 
         <!-- General Information and Intent + Requirements -->
         <div class="row">
@@ -57,20 +57,20 @@
                 <div class="card">
                     <div class="card-header general">General Information</div>
                     <div class="card-body">
-                        <p><strong>Experiment Name:</strong> moby-exp1</p>
-                        <p><strong>Experiment ID:</strong> fuTt55IBLOWBshtiLyul</p>
+                        <p><strong>Experiment Name:</strong> {{experiment.experiment_name}}</p>
+                        <p><strong>Experiment ID:</strong> {{experiment.experiment_id}}</p>
                         <p><strong>Start Date:</strong> {{ experiment.experiment_start }}</p>
                         <p><strong>End Date:</strong> {{ experiment.experiment_end }}</p>
                         <p><strong>Status:</strong> {{ experiment.status }}</p>
-                        <p><strong>Collaborators:</strong> Georgia Gkioka, Yiannis Verginadis</p>
+                        <p><strong>Collaborators:</strong> {{ experiment.collaborators}}</p>
                         <p><strong>Constraints:</strong> {% if experiment.constraints %}
                             <ul>
                                 {% for constraint in experiment.constraints %}
                                     <li>
-                                        <strong>ID:</strong> ConstraintXX,
-                                        <strong>On:</strong> SVM,
-                                        <strong>Is Hard:</strong> Yes,
-                                        <strong>How:</strong> Use
+                                        <strong>ID:</strong> {{ constraint.id }},
+                                        <strong>On:</strong> {{ constraint.on }},
+                                        <strong>Is Hard:</strong> {{constraint.is_hard }},
+                                        <strong>How:</strong> {{constraint.how }}
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -89,7 +89,7 @@
                 <div class="card mb-3">
                     <div class="card-header intent">Intent</div>
                     <div class="card-body">
-                        <p><strong>Intent:</strong> Classification</p>
+                        <p><strong>Intent:</strong> {{experiment.intent}}</p>
                     </div>
                 </div>
 
@@ -101,9 +101,9 @@
                             <ul>
                                 {% for req in experiment.requirements %}
                                     <li>
-                                        <strong>Metric:</strong> Accuracy,
-                                        <strong>Method:</strong> CrossValidation,
-                                        <strong>Objective:</strong> Maximize
+                                        <strong>Metric:</strong> {{ req.metric }},
+                                        <strong>Method:</strong> {{req.method }},
+                                        <strong>Objective:</strong> {{req.objective }}
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -128,11 +128,15 @@
                                     <div class="card-header processing">Models</div>
                                     <div class="card-body">
                                         {% if variabilityPoints.model %}
-                                            <ul>
-                                                <li><strong>Algorithm:</strong> SVM</li>
-                                                <li><strong>Parameter:</strong> C</li>
-                                                <li><strong>Parameter Values:</strong>0.1, 0.01, 1 </li>
-                                            </ul>
+                                        <ul>
+                                            {% for model in variabilityPoints.model %}
+                                                <li>
+                                                    <strong>Algorithm:</strong> {{ model.algorithm }}<br>
+                                                    <strong>Parameter:</strong> {{ model.parameter }}<br>
+                                                    <strong>Parameter Values:</strong> {{ model.parameter_value }}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
                                         {% else %}
                                             <p>No models available.</p>
                                         {% endif %}
@@ -144,16 +148,18 @@
                                 <div class="card">
                                     <div class="card-header processing">Datasets</div>
                                     <div class="card-body">
-                                        {% if variabilityPoints.dataSet %}
-                                            <ul>
-                                                <li><strong>Dataset Name:</strong> InputCSV</li>
-                                                <li><strong>Dataset Path:</strong> "MOBY/datasets/testcase_locations_sample.csv"</li>
-                                                <li><strong>Zenoh Key:</strong> {{ variabilityPoints.dataSet.zenoh_key_expr }}</li>
-                                                <li><strong>Reviewer Score:</strong> 78</li>
-                                            </ul>
-                                        {% else %}
-                                            <p>No datasets available.</p>
-                                        {% endif %}
+                                    {% if variabilityPoints.dataSet %}
+                                        <ul>
+                                            {% for dataset in variabilityPoints.dataSet %}
+                                                <li><strong>Dataset Name:</strong> {{ dataset.name }}</li>
+                                                <li><strong>Dataset Path:</strong> {{ dataset.path }}</li>
+                                                <li><strong>Zenoh Key:</strong> {{ dataset.zenoh_key_expr }}</li>
+                                                <li><strong>Reviewer Score:</strong> {{ dataset.reviewer_score }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p>No datasets available.</p>
+                                    {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -163,26 +169,22 @@
                         <div class="card mt-3">
                             <div class="card-header processing">Processing</div>
                             <div class="card-body">
-                                {% if variabilityPoints.processing.workflow %}
-                                    <ul>
-                                        {% for workflow in variabilityPoints.processing.workflow %}
-                                            <li><strong>Workflow ID: f-Tt55IBLOWBshtiMSu5</strong> </li>
-                                            <li><strong>Tasks:</strong>
-                                                <ul>
-                                                        <li>ReadData</li>
-                                                        <li>PreprocessData</li>
-                                                        <li>TimeBasedClustering</li>
-                                                        <li>TimeAndSpeedBasedClustering</li>
-                                                        <li>RuleBasedSegmentCombination</li>
-                                                        <li>ModeEstimation</li>
-                                                        <li>RuleBasedSegmentationCombinationUsingModes</li>
-                                                        <li>ActivityEstimation</li>
-                                                </ul>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <p>No processing workflows available.</p>
+                                {% if variabilityPoints.processing %}
+                                    {% if variabilityPoints.processing.workflow %}
+                                        <ul>
+                                            {% for workflow in variabilityPoints.processing.workflow %}
+                                                <li><strong>Workflow ID: {{workflow.id}} </strong> </li>
+                                                <li><strong>Tasks:</strong>
+                                                    <ul>
+                                                            <li> {{workflow.tasks}} </li>
+                                                        
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                    {% else %}
+                                <p>No processing workflows available.</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -199,10 +201,9 @@
                     <div class="card-body">
                         {% if lessons %}
                             {% for lesson in lessons %}
-                                <p><strong>Lessons:</strong> The experiment went well. </p>
+                                <p><strong>Lessons:</strong> {{lesson.lessons_learnt}} </p>
                                 <p><strong>Experiment Rating:</strong> {{ lesson.experiment_rating }}</p>
-                                <p><strong>Run Ratings:</strong> [6, Null, 2]</p>
-                                <p><strong>Best Performing Run:</strong> 1 </p>
+                                <p><strong>Run Ratings:</strong> {{lesson.run_rating}}</p>
                             {% endfor %}
                         {% else %}
                             <p>No lessons learnt available.</p>
@@ -218,8 +219,18 @@
                 <div class="card">
                     <div class="card-header evaluation">Evaluation</div>
                     <div class="card-body">
-                        <p><strong>Metrics:</strong> ML_Accuracy, ML_Recall</p>
-                        <p><strong>Run Metrics:</strong> [0.67, 0.65], [0.5, 0.6], [0.47, 0.62]</p>
+                    {% if evaluation %}
+                        <ul>
+                            {% for eval in evaluation %}
+                            <li>
+                                <strong>Metric name:</strong> {{ eval.name }} <br>
+                                <strong>Metrics value:</strong> {{ eval.value }}
+                            {% endfor %}
+                            </li>
+                        </ul>
+                    {% else %}
+                        <p>No evaluation metrics available.</p>
+                    {% endif %}
                     </div>
                 </div>
             </div>

@@ -12,7 +12,7 @@
         <h1 class="mb-4">Query Experiments</h1>
 
         <!-- Form Section -->
-        <form method="POST" action="/query_example_new_sqlalchemy" class="row g-3 mb-4">
+        <form method="POST" action="/query_experiments_page" class="row g-3 mb-4">
             <div class="col-md-4">
                 <label for="experiment_name" class="form-label">Experiment Name</label>
                 <input type="text" class="form-control" id="experiment_name" name="experiment_name" placeholder="Experiment Name">
@@ -132,7 +132,7 @@
                     <td>{{ group[0].status }}</td>
                     <td>
                         <button type="button" class="btn btn-info btn-sm view-details-btn" data-experiment-id="{{ group[0].experiment_id }}">
-                            View Details
+                            View Card
                         </button>
                     </td>
                     <td>
@@ -200,7 +200,7 @@
                 modalContentPlaceholder.html('<p>Loading...</p>');
 
                 // Load content dynamically
-                $.get(`/experiment_details/${experimentId}`, function (data) {
+                $.get(`/experiment_details_realData/${experimentId}`, function (data) {
                     modalContentPlaceholder.html(data);
                 });
 
