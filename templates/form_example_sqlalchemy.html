@@ -15,32 +15,40 @@
         <form method="POST" action="/query_experiments_page" class="row g-3 mb-4">
             <div class="col-md-4">
                 <label for="experiment_name" class="form-label">Experiment Name</label>
-                <input type="text" class="form-control" id="experiment_name" name="experiment_name" placeholder="Experiment Name">
+                <input type="text" class="form-control" id="experiment_name" name="experiment_name" placeholder="Experiment Name" value="{{ filters.get('experiment_name', '') }}">
             </div>
             <div class="col-md-4">
                 <label for="intent" class="form-label">Intent</label>
                 <select id="intent" name="intent" class="form-select">
-                    <option value="">--Select Intent--</option>
-                    <option value="classification">Classification</option>
-                    <option value="regression">Regression</option>
-                    <option value="clustering">Clustering</option>
+                    <option value="" {% if not filters.get('intent') %}selected{% endif %}>--Select Intent--</option>
+                    <option value="classification" {% if filters.get('intent') == 'classification' %}selected{% endif %}>Classification</option>
+                    <option value="regression" {% if filters.get('intent') == 'regression' %}selected{% endif %}>Regression</option>
+                    <option value="clustering" {% if filters.get('intent') == 'clustering' %}selected{% endif %}>Clustering</option>
                 </select>
             </div>
             <div class="col-md-4">
                 <label for="start_date" class="form-label">Start Date</label>
-                <input type="date" class="form-control" id="start_date" name="start_date">
+                <input type="date" class="form-control" id="start_date" name="start_date" value="{{ filters.get('start_date', '') }}">
             </div>
             <div class="col-md-4">
                 <label for="end_date" class="form-label">End Date</label>
-                <input type="date" class="form-control" id="end_date" name="end_date">
+                <input type="date" class="form-control" id="end_date" name="end_date" value="{{ filters.get('end_date', '') }}">
             </div>
             <div class="col-md-4">
                 <label for="algorithm" class="form-label">Algorithm</label>
-                <input type="text" class="form-control" id="algorithm" name="algorithm" placeholder="Algorithm">
+                <input type="text" class="form-control" id="algorithm" name="algorithm" placeholder="Algorithm" value="{{ filters.get('algorithm', '') }}">
             </div>
             <div class="col-md-4">
                 <label for="metric_name" class="form-label">Metric Name</label>
-                <input type="text" class="form-control" id="metric_name" name="metric_name" placeholder="Metric Name">
+                <input type="text" class="form-control" id="metric_name" name="metric_name" placeholder="Metric Name" value="{{ filters.get('metric_name', '') }}">
+            </div>
+            <div class="col-md-4">
+                <label for="per_page" class="form-label">Results per page</label>
+                <select id="per_page" name="per_page" class="form-select">
+                    {% for option in [10, 20, 50, 100] %}
+                        <option value="{{ option }}" {% if per_page == option %}selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-primary">Search</button>
@@ -166,6 +174,40 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        {% if pagination.pages > 1 %}
+        <nav aria-label="Experiment pagination">
+            <ul class="pagination">
+                <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                    {% if pagination.has_prev %}
+                    <a class="page-link" href="{{ build_pagination_url(pagination.prev_num) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                    {% else %}
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                    {% endif %}
+                </li>
+                {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="{{ build_pagination_url(page_num) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                    {% if pagination.has_next %}
+                    <a class="page-link" href="{{ build_pagination_url(pagination.next_num) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                    {% else %}
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
     </div>
     
     <!-- Modal -->

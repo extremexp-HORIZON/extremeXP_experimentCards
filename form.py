@@ -281,94 +281,102 @@ def submit_form(experiment_id):
 
 @app.route('/query_experiments_page', methods=['GET', 'POST'])
 def query_experiments_page():
-    results = []
     filters = {}
-
     if request.method == 'POST':
-        # Get filter values from the form
-        experiment_name = request.form.get('experiment_name')
-        intent = request.form.get('intent')
-        start_date = request.form.get('start_date')
-        end_date = request.form.get('end_date')
-        algorithm = request.form.get('algorithm')
-        metric_name = request.form.get('metric_name')
+        per_page = int(request.form.get('per_page', 10))
+        filters = {
+            'experiment_name': request.form.get('experiment_name', '').strip(),
+            'intent': request.form.get('intent', '').strip(),
+            'start_date': request.form.get('start_date', '').strip(),
+            'end_date': request.form.get('end_date', '').strip(),
+            'algorithm': request.form.get('algorithm', '').strip(),
+            'metric_name': request.form.get('metric_name', '').strip(),
+        }
+        query_args = {k: v for k, v in filters.items() if v}
+        query_args['per_page'] = per_page
+        query_args['page'] = 1
+        return redirect(url_for('query_experiments_page', **query_args))
 
-        # Build the query dynamically using SQLAlchemy
-        query = db.session.query(
-            Experiment.experiment_id,
-            Experiment.experiment_name,
-            Experiment.experiment_start,
-            Experiment.experiment_end,
-            Experiment.collaborators,
-            Experiment.status,
-            Experiment.intent,
-            ExperimentRequirement.metric,
-            ExperimentModel.algorithm,
-            EvaluationMetric.name.label("metric_name"),
-            EvaluationMetric.value.label("metric_value"),
-            LessonLearnt.lessons_learnt,
-            LessonLearnt.experiment_rating, 
-            ExperimentDataset.name.label("dataset_name")
-        ).join(
-            LessonLearnt, Experiment.experiment_id == LessonLearnt.experiment_id, isouter=True
-        ).join(
-            ExperimentModel, Experiment.experiment_id == ExperimentModel.experiment_id, isouter=True
-        ).join(
-            EvaluationMetric, Experiment.experiment_id == EvaluationMetric.experiment_id, isouter=True
-        ).join(
-            ExperimentRequirement, Experiment.experiment_id == ExperimentRequirement.experiment_id, isouter=True
-        ).join(
-            ExperimentDataset, Experiment.experiment_id == ExperimentDataset.experiment_id, isouter=True
-        )
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    filters = {
+        'experiment_name': request.args.get('experiment_name', ''),
+        'intent': request.args.get('intent', ''),
+        'start_date': request.args.get('start_date', ''),
+        'end_date': request.args.get('end_date', ''),
+        'algorithm': request.args.get('algorithm', ''),
+        'metric_name': request.args.get('metric_name', '')
+    }
 
-        # Apply filters 
-        if experiment_name:
-            query = query.filter(Experiment.experiment_name.ilike(f"%{experiment_name}%"))
-        if intent:
-            query = query.filter(func.lower(Experiment.intent) == intent.lower())
-        if start_date:
-            query = query.filter(func.date(Experiment.experiment_start) == start_date)
-        if end_date:
-            query = query.filter(func.date(Experiment.experiment_end) == end_date)
-        if algorithm:
-            query = query.filter(ExperimentModel.algorithm.ilike(f"%{algorithm}%"))
-        if metric_name:
-            query = query.filter(EvaluationMetric.name.ilike(f"%{metric_name}%"))
+    experiment_query = Experiment.query
 
-        results = query.all()
-    else:
-        results = db.session.query(
-            Experiment.experiment_id,
-            Experiment.experiment_name,
-            Experiment.experiment_start,
-            Experiment.experiment_end,
-            Experiment.collaborators,
-            Experiment.status,
-            Experiment.intent,
-            ExperimentRequirement.metric,
-            ExperimentModel.algorithm,
-            EvaluationMetric.name.label("metric_name"),
-            EvaluationMetric.value.label("metric_value"),
-            LessonLearnt.lessons_learnt,
-            LessonLearnt.experiment_rating, 
-            ExperimentDataset.name.label("dataset_name")
-        ).join(
-            LessonLearnt, Experiment.experiment_id == LessonLearnt.experiment_id, isouter=True
-        ).join(
-            ExperimentModel, Experiment.experiment_id == ExperimentModel.experiment_id, isouter=True
-        ).join(
-            EvaluationMetric, Experiment.experiment_id == EvaluationMetric.experiment_id, isouter=True
-        ).join(
-            ExperimentRequirement, Experiment.experiment_id == ExperimentRequirement.experiment_id, isouter=True
-        ).join(
-            ExperimentDataset, Experiment.experiment_id == ExperimentDataset.experiment_id, isouter=True
-        ).all()
-        
+    if filters['experiment_name']:
+        experiment_query = experiment_query.filter(Experiment.experiment_name.ilike(f"%{filters['experiment_name']}%"))
+    if filters['intent']:
+        experiment_query = experiment_query.filter(func.lower(Experiment.intent) == filters['intent'].lower())
+    if filters['start_date']:
+        experiment_query = experiment_query.filter(func.date(Experiment.experiment_start) == filters['start_date'])
+    if filters['end_date']:
+        experiment_query = experiment_query.filter(func.date(Experiment.experiment_end) == filters['end_date'])
+    if filters['algorithm']:
+        experiment_query = experiment_query.join(ExperimentModel).filter(ExperimentModel.algorithm.ilike(f"%{filters['algorithm']}%"))
+    if filters['metric_name']:
+        experiment_query = experiment_query.join(EvaluationMetric).filter(EvaluationMetric.name.ilike(f"%{filters['metric_name']}%"))
+
+    experiment_query = experiment_query.order_by(Experiment.experiment_start.desc()).distinct()
+    pagination = experiment_query.paginate(page=page, per_page=per_page, error_out=False)
+
     grouped_results = []
-    for key, group in groupby(results, key=lambda x: x.experiment_id):
-        grouped_results.append(list(group))
+    if pagination.items:
+        experiment_ids = [exp.experiment_id for exp in pagination.items]
+        details_query = db.session.query(
+            Experiment.experiment_id,
+            Experiment.experiment_name,
+            Experiment.experiment_start,
+            Experiment.experiment_end,
+            Experiment.collaborators,
+            Experiment.status,
+            Experiment.intent,
+            ExperimentRequirement.metric,
+            ExperimentModel.algorithm,
+            EvaluationMetric.name.label("metric_name"),
+            EvaluationMetric.value.label("metric_value"),
+            LessonLearnt.lessons_learnt,
+            LessonLearnt.experiment_rating, 
+            ExperimentDataset.name.label("dataset_name")
+        ).join(
+            LessonLearnt, Experiment.experiment_id == LessonLearnt.experiment_id, isouter=True
+        ).join(
+            ExperimentModel, Experiment.experiment_id == ExperimentModel.experiment_id, isouter=True
+        ).join(
+            EvaluationMetric, Experiment.experiment_id == EvaluationMetric.experiment_id, isouter=True
+        ).join(
+            ExperimentRequirement, Experiment.experiment_id == ExperimentRequirement.experiment_id, isouter=True
+        ).join(
+            ExperimentDataset, Experiment.experiment_id == ExperimentDataset.experiment_id, isouter=True
+        ).filter(Experiment.experiment_id.in_(experiment_ids)).order_by(Experiment.experiment_id)
 
-    return render_template('form_example_sqlalchemy.html', results=grouped_results, filters=filters)
+        results = details_query.all()
+        for key, group in groupby(results, key=lambda x: x.experiment_id):
+            grouped_results.append(list(group))
+
+    filter_params = {k: v for k, v in filters.items() if v}
+
+    def build_pagination_url(page_number):
+        args = dict(filter_params)
+        args['page'] = page_number
+        args['per_page'] = per_page
+        return url_for('query_experiments_page', **args)
+
+    return render_template(
+        'form_example_sqlalchemy.html',
+        results=grouped_results,
+        filters=filters,
+        pagination=pagination,
+        per_page=per_page,
+        filter_params=filter_params,
+        build_pagination_url=build_pagination_url
+    )
 
 def extract_experiment_data(workflows_list):
     experiment_info = {
