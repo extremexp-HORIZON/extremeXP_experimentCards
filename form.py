@@ -312,6 +312,7 @@ def query_experiments_page():
             'end_date': request.form.get('end_date', '').strip(),
             'algorithm': request.form.get('algorithm', '').strip(),
             'metric_name': request.form.get('metric_name', '').strip(),
+            'experiment_id': request.form.get('experiment_id', '').strip(),
         }
         query_args = {k: v for k, v in filters.items() if v}
         query_args['per_page'] = per_page
@@ -321,6 +322,7 @@ def query_experiments_page():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     filters = {
+        'experiment_id': request.args.get('experiment_id', ''),
         'experiment_name': request.args.get('experiment_name', ''),
         'intent': request.args.get('intent', ''),
         'start_date': request.args.get('start_date', ''),
@@ -331,6 +333,8 @@ def query_experiments_page():
 
     experiment_query = Experiment.query
 
+    if filters['experiment_id']:
+        experiment_query = experiment_query.filter(Experiment.experiment_id == filters['experiment_id'])
     if filters['experiment_name']:
         experiment_query = experiment_query.filter(Experiment.experiment_name.ilike(f"%{filters['experiment_name']}%"))
     if filters['intent']:

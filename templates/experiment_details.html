@@ -147,8 +147,7 @@
                                         {% if variabilityPoints.dataSet %}
                                             <ul>
                                                 <li><strong>Dataset Name:</strong> InputCSV</li>
-                                                <li><strong>Dataset Path:</strong> "MOBY/datasets/testcase_locations_sample.csv"</li>
-                                                <li><strong>Zenoh Key:</strong> {{ variabilityPoints.dataSet.zenoh_key_expr }}</li>
+                                                <li><strong>Dataset Path:</strong> {{ variabilityPoints.dataSet.zenoh_key_expr }}</li>
                                                 <li><strong>Reviewer Score:</strong> 78</li>
                                             </ul>
                                         {% else %}

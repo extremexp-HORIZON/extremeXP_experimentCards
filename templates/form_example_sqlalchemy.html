@@ -14,6 +14,10 @@
         <!-- Form Section -->
         <form method="POST" action="/query_experiments_page" class="row g-3 mb-4">
             <div class="col-md-4">
+                <label for="experiment_id" class="form-label">Experiment ID</label>
+                <input type="text" class="form-control" id="experiment_id" name="experiment_id" placeholder="Experiment ID" value="{{ filters.get('experiment_id', '') }}">
+            </div>
+            <div class="col-md-4">
                 <label for="experiment_name" class="form-label">Experiment Name</label>
                 <input type="text" class="form-control" id="experiment_name" name="experiment_name" placeholder="Experiment Name" value="{{ filters.get('experiment_name', '') }}">
             </div>
