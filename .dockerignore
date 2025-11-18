@@ -2,8 +2,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.log
-# .env
-git/
+.env
+.git/
 uploads/
 tests/
 .conda/

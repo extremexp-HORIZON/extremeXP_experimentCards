@@ -1,24 +1,35 @@
-from flask import Flask, jsonify, render_template, request, flash, redirect, url_for
-from app.models import db, Experiment,ExperimentRequirement, ExperimentModel, EvaluationMetric, LessonLearnt, ExperimentDataset, ExperimentConstraint
+import json
+import logging
+import os
+from itertools import groupby
+from types import SimpleNamespace
+from typing import Iterable, List, Optional, Sequence
+
+import requests
+from dotenv import load_dotenv
+from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask_swagger_ui import get_swaggerui_blueprint
+from sqlalchemy.sql import func
+from werkzeug.exceptions import NotFound
+from werkzeug.utils import secure_filename
+
 from app.config import Config
 from app.ingest import load_and_insert
-from itertools import groupby
-from operator import itemgetter
-from sqlalchemy.sql import func
-import requests
-import os
-import json
-from werkzeug.utils import secure_filename
-import logging
-from http.client import HTTPException
-from dotenv import load_dotenv
-from types import SimpleNamespace
+from app.models import (
+    EvaluationMetric,
+    Experiment,
+    ExperimentConstraint,
+    ExperimentDataset,
+    ExperimentModel,
+    ExperimentRequirement,
+    LessonLearnt,
+    db,
+)
 
 
 load_dotenv()
 
-logging.basicConfig(level=logging.DEBUG)
-from flask_swagger_ui import get_swaggerui_blueprint
+logging.basicConfig(level=logging.INFO)
 
 SWAGGER_URL = '/swagger'
 API_URL = '/static/swagger.yaml'  
@@ -34,20 +45,18 @@ def create_app():
         db.create_all()
         try:
             load_and_insert(db)
-            print("Database populated successfully!")
+            app.logger.info("Database populated successfully!")
         except Exception as e:
-            print(f"Error populating database: {str(e)}")
+            app.logger.exception("Error populating database: %s", e)
     return app, db
 app, db = create_app()
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-
 if not ACCESS_TOKEN:
-    raise EnvironmentError("ACCESS_TOKEN environment variable is not set.")
-EXPERIMENT_ID = "jZa-mJQBZTyxy1ACX1W8"
-# BASE_URL = "https://api.expvis.smartarch.cz/api"
+    raise RuntimeError("ACCESS_TOKEN environment variable is not set.")
+
 BASE_URL = "https://api.dal.extremexp-icom.intracom-telecom.com/api"
 EXCLUDED_METRICS = {"lessonsLearnt", "experimentRating", "runRatings"}
 
@@ -65,17 +74,111 @@ def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", 
     }
 
     try:
-        response = requests.put(metrics_url, headers=headers, data=json.dumps(payload))
+        response = requests.put(metrics_url, headers=headers, json=payload, timeout=10)
         if response.status_code in [200, 201]:
-            logging.info("Response JSON:", response.json()) 
+            logging.info("Metric updated via DAL API: %s", response.json())
             return {"success": True, "data": response.json()}
-        
-        logging.info(f"Unexpected status code: {response.status_code} - {response.text}")
+
+        logging.info("Unexpected status code %s: %s", response.status_code, response.text)
         return {"success": False, "error": f"Unexpected status code: {response.status_code}"}
-    
+
     except requests.exceptions.RequestException as e:
-        logging.info(f"Error during API call: {e}")
+        logging.info("Error during DAL API call: %s", e)
         return {"success": False, "error": str(e)}
+
+
+def _query_experiment_entities(experiment_id: str):
+    experiment = Experiment.query.get_or_404(experiment_id)
+    requirements = ExperimentRequirement.query.filter_by(experiment_id=experiment_id).all()
+    models = ExperimentModel.query.filter_by(experiment_id=experiment_id).all()
+    datasets = ExperimentDataset.query.filter_by(experiment_id=experiment_id).all()
+    lessons = LessonLearnt.query.filter_by(experiment_id=experiment_id).all()
+    evaluation = EvaluationMetric.query.filter_by(experiment_id=experiment_id).all()
+    return experiment, requirements, models, datasets, lessons, evaluation
+
+
+def _log_experiment_snapshot(experiment, requirements, models, datasets, lessons, evaluation):
+    logging.info("Experiment: %s", experiment)
+    logging.info("Requirements: %s", requirements)
+    logging.info("Models: %s", models)
+    logging.info("Datasets: %s", datasets)
+    logging.info("Lessons: %s", lessons)
+    for metric in evaluation:
+        logging.info("Evaluation metric: %s", vars(metric))
+
+
+def _filter_metrics(metrics: Iterable[EvaluationMetric], excluded: Sequence[str]):
+    excluded_set = set(excluded)
+    return [metric for metric in metrics if metric.name not in excluded_set]
+
+
+def _save_pdf_file(pdf_file):
+    if not pdf_file or not pdf_file.filename:
+        return None
+    filename = secure_filename(pdf_file.filename)
+    if not filename.lower().endswith(".pdf"):
+        raise ValueError("Invalid file format. Please upload a PDF file.")
+    upload_folder = app.config["UPLOAD_FOLDER"]
+    os.makedirs(upload_folder, exist_ok=True)
+    file_path = os.path.join(upload_folder, filename)
+    pdf_file.save(file_path)
+    return file_path
+
+
+def _parse_run_ratings(raw_ratings: Optional[str]) -> List[int]:
+    if not raw_ratings:
+        raise ValueError("Run ratings are required.")
+    normalized = raw_ratings.strip()
+    if normalized.startswith("[") and normalized.endswith("]"):
+        normalized = normalized[1:-1]
+    tokens = [token.strip() for token in normalized.split(",")]
+    if not tokens or any(token == "" for token in tokens):
+        raise ValueError("Run ratings must be integers separated by commas.")
+    try:
+        ratings = [int(token) for token in tokens]
+    except ValueError as exc:
+        raise ValueError("Run ratings must be integers separated by commas.") from exc
+    if not ratings:
+        raise ValueError("Run ratings are required.")
+    if any(r < 1 or r > 7 for r in ratings):
+        raise ValueError("Each run rating must be between 1 and 7 (inclusive).")
+    return ratings
+
+
+def _upsert_metric(experiment_id: str, metric_name: str, metric_value: str):
+    metric_id = f"{experiment_id}_{metric_name}"
+    metric_row = EvaluationMetric.query.filter_by(metric_id=metric_id, experiment_id=experiment_id).first()
+    if metric_row:
+        metric_row.name = metric_name
+        metric_row.value = metric_value
+    else:
+        db.session.add(
+            EvaluationMetric(
+                metric_id=metric_id,
+                experiment_id=experiment_id,
+                name=metric_name,
+                value=metric_value,
+            )
+        )
+
+
+def _is_ajax_request() -> bool:
+    return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+
+def _submit_response(success: bool, message: str, experiment_id: str, http_status: int = 200):
+    if _is_ajax_request():
+        payload = {"status": "success" if success else "error", "message": message}
+        return jsonify(payload), http_status
+    status_param = "success" if success else "error"
+    return redirect(
+        url_for(
+            "message_page",
+            experiment_id=experiment_id,
+            status=status_param,
+            msg=message,
+        )
+    )
     
 @app.after_request
 def add_header(response):
@@ -87,43 +190,13 @@ def embed_test():
     return render_template('embed_test.html')
 @app.route('/experiment_details_realData/<experiment_id>', methods=['GET'])
 def experiment_details_realData(experiment_id):
-    experiment = Experiment.query.get_or_404(experiment_id)
-    
+    experiment, requirements, models, datasets, lessons, evaluation = _query_experiment_entities(experiment_id)
+    _log_experiment_snapshot(experiment, requirements, models, datasets, lessons, evaluation)
 
-    requirements = ExperimentRequirement.query.filter_by(experiment_id=experiment_id).all()
-    models = ExperimentModel.query.filter_by(experiment_id=experiment_id).all()
-    datasets = ExperimentDataset.query.filter_by(experiment_id=experiment_id).all()
-    lessons = LessonLearnt.query.filter_by(experiment_id=experiment_id).all()
+    variability_points = {"dataSet": datasets, "model": models}
+    filtered_evaluation = _filter_metrics(evaluation, EXCLUDED_METRICS)
 
-   
-    experiment_model = ExperimentModel.query.filter_by(experiment_id=experiment_id).all()
-    evaluation = EvaluationMetric.query.filter_by(experiment_id=experiment_id).all()
-
-    logging.info("Experiment: %s", str(experiment))
-    logging.info("Requirements:%s", str( requirements))
-    logging.info("Models: %s", str(models))
-    logging.info("Datasets: %s", str( datasets))
-    logging.info("Lessons: %s", str( lessons))
-    for eval in evaluation:
-        logging.info(vars(eval))
-    #
- # Log all information in models
-    logging.info("Models:")
-    for model in experiment_model:
-        logging.info(vars(model))  # Logs all attributes of the model object
-
-    # Log all information in datasets
-    logging.info("Datasets:")
-    for dataset in datasets:
-        logging.info(vars(dataset))  # Logs all attributes of the dataset object
-
-    filtered_evaluation = [metric for metric in evaluation if metric.name not in EXCLUDED_METRICS]
-
-    variabilityPoints = {
-        "dataSet": datasets,
-        "model": models
-    }
-    logging.info("Variability Points: %s", str( variabilityPoints))
+    logging.info("Variability Points: %s", variability_points)
 
     return render_template(
         'experiment_details_realData.html',
@@ -132,26 +205,14 @@ def experiment_details_realData(experiment_id):
         models=models,
         datasets=datasets,
         lessons=lessons,
-        variabilityPoints=variabilityPoints,
+        variabilityPoints=variability_points,
         evaluation=filtered_evaluation
     )
 
 @app.route('/experiment_details/<experiment_id>', methods=['GET'])
 def experiment_details(experiment_id):
-    experiment = Experiment.query.get_or_404(experiment_id)
-    
-
-    requirements = ExperimentRequirement.query.filter_by(experiment_id=experiment_id).all()
-    models = ExperimentModel.query.filter_by(experiment_id=experiment_id).all()
-    datasets = ExperimentDataset.query.filter_by(experiment_id=experiment_id).all()
-    lessons = LessonLearnt.query.filter_by(experiment_id=experiment_id).all()
-
-    logging.info("Experiment: %s", str(experiment))
-    logging.info("Requirements:%s", str( requirements))
-    logging.info("Models: %s", str(models))
-    logging.info("Datasets: %s", str( datasets))
-    logging.info("Lessons: %s", str( lessons))
-
+    experiment, requirements, models, datasets, lessons, evaluation = _query_experiment_entities(experiment_id)
+    _log_experiment_snapshot(experiment, requirements, models, datasets, lessons, evaluation)
 
     variabilityPoints = {
         "dataSet": {
@@ -214,91 +275,101 @@ UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', '/app/uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = {'pdf'}
 app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024  
-import logging
 
 @app.route('/submit/<experiment_id>', methods=['POST'])
 def submit_form(experiment_id):
     try:
-        lessons_learnt = request.form.get('lessonsLearnt')
-        experiment_rating = request.form.get('experimentRating')
-        run_ratings = request.form.get('runRatings')
+        lessons_learnt = request.form.get('lessonsLearnt', '').strip()
+        experiment_rating_raw = request.form.get('experimentRating')
+        run_ratings_raw = request.form.get('runRatings')
         pdf_file = request.files.get('pdfFile')
-        logging.info(f"Lessons Learnt: {lessons_learnt}")
-        logging.info(f"Experiment Rating: {experiment_rating}")
-        logging.info(f"Run Ratings: {run_ratings}")
 
-        # Validate and save the uploaded file
-        if pdf_file and pdf_file.filename:
-            filename = secure_filename(pdf_file.filename)
-            if not filename.endswith('.pdf'):
-                return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg="Invalid file format. Please upload a PDF file."))
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            pdf_file.save(file_path)
-
-        # Validate form inputs
-        try:
-            experiment_rating = int(experiment_rating)
-        except ValueError:
-            return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg="Experiment rating must be an integer."))
+        logging.info("Received submission for %s", experiment_id)
+        logging.debug("Lessons learnt: %s", lessons_learnt)
+        logging.debug("Experiment rating: %s", experiment_rating_raw)
+        logging.debug("Run ratings: %s", run_ratings_raw)
 
         try:
-            run_ratings = [int(r.strip()) for r in run_ratings.split(",")]
-        except ValueError:
-            return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg="Run ratings must be integers separated by commas."))
-
-        if any(r < 1 or r > 7 for r in run_ratings):
-            return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg="Each run rating must be between 1 and 7 (inclusive)."))
-
-        response_lessons = add_metric(experiment_id, "lessonsLearnt", lessons_learnt, "string")
-        response_experiment = add_metric(experiment_id, "experimentRating", str(experiment_rating), "string")
-        response_runs = add_metric(experiment_id, "runRatings", json.dumps(run_ratings), "series")
-
-        if not response_lessons.get("success", False):
-            return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg=f"Failed to insert lessons learnt metric for experiment with id {experiment_id}."))
-        if not response_experiment.get("success", False):
-            return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg=f"Failed to insert experiment rating metric for experiment with id {experiment_id}."))
-        if not response_runs.get("success", False):
-            return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg=f"Failed to insert run ratings metric for experiment with id {experiment_id}."))
-
-        def upsert_metric(metric_name, metric_value):
-            metric_id = f"{experiment_id}_{metric_name}"
-            metric_row = EvaluationMetric.query.filter_by(metric_id=metric_id, experiment_id=experiment_id).first()
-            if metric_row:
-                metric_row.name = metric_name
-                metric_row.value = metric_value
-            else:
-                db.session.add(EvaluationMetric(metric_id=metric_id, experiment_id=experiment_id, name=metric_name, value=metric_value))
+            _save_pdf_file(pdf_file)
+        except ValueError as exc:
+            return _submit_response(False, str(exc), experiment_id, http_status=400)
 
         try:
-            entry = LessonLearnt.query.filter_by(lessons_learnt_id=f"lessons_learnt_{experiment_id}", experiment_id=experiment_id).first()
+            experiment_rating = int(experiment_rating_raw)
+        except (TypeError, ValueError):
+            return _submit_response(False, "Experiment rating must be an integer.", experiment_id, 400)
+
+        try:
+            run_ratings = _parse_run_ratings(run_ratings_raw)
+        except ValueError as exc:
+            return _submit_response(False, str(exc), experiment_id, 400)
+
+        metric_payloads = [
+            ("lessonsLearnt", lessons_learnt, "string"),
+            ("experimentRating", str(experiment_rating), "string"),
+            ("runRatings", json.dumps(run_ratings), "series"),
+        ]
+
+        for name, value, metric_type in metric_payloads:
+            response = add_metric(experiment_id, name, value, metric_type)
+            if not response.get("success"):
+                return _submit_response(
+                    False,
+                    f"Failed to insert {name} metric for experiment with id {experiment_id}.",
+                    experiment_id,
+                    502,
+                )
+
+        try:
+            entry = LessonLearnt.query.filter_by(
+                lessons_learnt_id=f"lessons_learnt_{experiment_id}",
+                experiment_id=experiment_id,
+            ).first()
             if entry:
                 entry.lessons_learnt = lessons_learnt
                 entry.experiment_rating = experiment_rating
                 entry.run_rating = run_ratings
             else:
-                db.session.add(LessonLearnt(
-                    lessons_learnt_id = f"lessons_learnt_{experiment_id}",
-                    experiment_id=experiment_id,
-                    lessons_learnt=lessons_learnt,
-                    experiment_rating=experiment_rating,
-                    run_rating=run_ratings
-                ))
+                db.session.add(
+                    LessonLearnt(
+                        lessons_learnt_id=f"lessons_learnt_{experiment_id}",
+                        experiment_id=experiment_id,
+                        lessons_learnt=lessons_learnt,
+                        experiment_rating=experiment_rating,
+                        run_rating=run_ratings,
+                    )
+                )
 
-            upsert_metric("lessonsLearnt", lessons_learnt)
-            upsert_metric("experimentRating", str(experiment_rating))
-            upsert_metric("runRatings", json.dumps(run_ratings))
+            _upsert_metric(experiment_id, "lessonsLearnt", lessons_learnt)
+            _upsert_metric(experiment_id, "experimentRating", str(experiment_rating))
+            _upsert_metric(experiment_id, "runRatings", json.dumps(run_ratings))
 
             db.session.commit()
-        except Exception as e:
+        except Exception as exc:
             db.session.rollback()
-            logging.error(f"Failed to insert metrics into the database: {e}")
-            return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg=f"Failed to insert metrics into the database for experiment with id {experiment_id}."))
+            logging.exception("Failed to insert metrics into the database: %s", exc)
+            return _submit_response(
+                False,
+                f"Failed to insert metrics into the database for experiment with id {experiment_id}.",
+                experiment_id,
+                500,
+            )
 
-        return redirect(url_for("message_page", experiment_id=experiment_id, status="success", msg=f"Metrics successfully inserted for experiment with id {experiment_id}!"))
+        return _submit_response(
+            True,
+            f"Metrics successfully inserted for experiment with id {experiment_id}!",
+            experiment_id,
+            200,
+        )
 
-    except Exception as e:
-        logging.error(f"Unexpected error: {e}")
-        return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg="An unexpected error occurred. Please try again later."))
+    except Exception as exc:
+        logging.exception("Unexpected error submitting form: %s", exc)
+        return _submit_response(
+            False,
+            "An unexpected error occurred. Please try again later.",
+            experiment_id,
+            500,
+        )
 
 @app.route('/query_experiments_page', methods=['GET', 'POST'])
 def query_experiments_page():
@@ -467,7 +538,7 @@ def fetch_experiment_data(experiment_id):
     experiment_url = f"{BASE_URL}/experiments/{experiment_id}"
     response = requests.get(experiment_url, headers=headers)
     if response.status_code != 200:
-        raise HTTPException(status_code=404, detail="Experiment not found")
+        raise NotFound("Experiment not found")
     data = response.json().get("experiment", {})
     workflow_ids = data.get("workflow_ids", [])
     workflows_list = []
@@ -497,7 +568,7 @@ def fetch_experiment_data(experiment_id):
             for metric_entry in metrics:
                 for metric_id, metric_details in metric_entry.items():
                     records = metric_details.get("records")
-                    print(records)
+                    logging.debug("Metric %s raw records: %s", metric_id, records)
                     if records is not None:
                         if isinstance(records, list):
                             record_values = [record.get("value") for record in records if isinstance(record, dict)]
@@ -573,11 +644,15 @@ def fetch_experiment_data(experiment_id):
 
 
 def insert_data_from_json(data):
+    experiment_info = data.get("experimentCard", {}).get("experimentInfo")
+    experiment_id = experiment_info.get("experimentId") if experiment_info else "unknown"
     try:
-        experiment_info = data["experimentCard"]["experimentInfo"]
-        print(experiment_info)
+        if not experiment_info:
+            raise ValueError("experimentInfo section missing from payload")
+
+        logging.info("Persisting experiment %s from JSON payload", experiment_id)
         experiment = Experiment(
-            experiment_id=experiment_info["experimentId"],
+            experiment_id=experiment_id,
             experiment_name=experiment_info["experimentName"],
             experiment_start=experiment_info["experimentStartDate"][0],  
             experiment_end=experiment_info["experimentEndDate"][-1], 
@@ -593,7 +668,7 @@ def insert_data_from_json(data):
                 on_component=constraint["on"],
                 is_hard=constraint["isHard"],
                 how=constraint["how"],
-                experiment_id=experiment_info["experimentId"]
+                experiment_id=experiment_id,
             )
             db.session.add(experiment_constraint)
 
@@ -603,28 +678,29 @@ def insert_data_from_json(data):
                 metric=requirement["metric"],
                 method=requirement["method"],
                 objective=requirement["objective"],
-                experiment_id=experiment_info["experimentId"]
+                experiment_id=experiment_id,
             )
             db.session.add(experiment_requirement)
 
-        dataset_info = data["experimentCard"]["variabilityPoints"]["dataSet"]
-        experiment_dataset = ExperimentDataset(
-            id_dataset=dataset_info["id_dataset"],
-            name=dataset_info["name"],
-            zenoh_key_expr=dataset_info["zenoh_key_expr"],
-            reviewer_score=dataset_info["reviewer_score"],
-            experiment_id=experiment_info["experimentId"]
-        )
-        db.session.add(experiment_dataset)
+        dataset_info = data["experimentCard"]["variabilityPoints"].get("dataSet")
+        if dataset_info:
+            experiment_dataset = ExperimentDataset(
+                id_dataset=dataset_info.get("id_dataset"),
+                name=dataset_info.get("name"),
+                zenoh_key_expr=dataset_info.get("zenoh_key_expr"),
+                reviewer_score=dataset_info.get("reviewer_score"),
+                experiment_id=experiment_id,
+            )
+            db.session.add(experiment_dataset)
 
-        model_info = data["experimentCard"]["variabilityPoints"]["model"]
-        for workflow_id, parameters in model_info["parameters"].items():
+        model_info = data["experimentCard"]["variabilityPoints"].get("model") or {}
+        for workflow_id, parameters in (model_info.get("parameters") or {}).items():
             for param in parameters:
                 experiment_model = ExperimentModel(
-                    algorithm=model_info["algorithm"],
-                    parameter=param["name"],
-                    parameter_value=param["value"],
-                    experiment_id=experiment_info["experimentId"]
+                    algorithm=model_info.get("algorithm"),
+                    parameter=param.get("name"),
+                    parameter_value=param.get("value"),
+                    experiment_id=experiment_id,
                 )
                 db.session.add(experiment_model)
 
@@ -633,24 +709,23 @@ def insert_data_from_json(data):
                 metric_id=metric["metricId"],
                 name=metric["name"],
                 value=metric["records"],
-                # semantic_type=metric["semantic_type"],
-                experiment_id=experiment_info["experimentId"]
+                experiment_id=experiment_id,
             )
             db.session.add(evaluation_metric)
 
         db.session.commit()
-        print("Data inserted successfully!")
+        logging.info("Experiment %s inserted successfully!", experiment_id)
 
     except Exception as e:
         db.session.rollback()
-        print(f"Error inserting data: {e}")
+        logging.exception("Error inserting experiment %s: %s", experiment_id, e)
     finally:
         db.session.close()
 
 @app.route("/newExperiment/<experiment_id>", methods=["POST"])
 def get_experiment(experiment_id):
     experiment_data = fetch_experiment_data(experiment_id)
-    print(experiment_data)
+    logging.info("Fetched experiment %s from DAL API", experiment_id)
     folder_path = os.path.join(os.getcwd(), "experiment_cards_json")
 
     if not os.path.exists(folder_path):

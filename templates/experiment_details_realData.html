@@ -62,15 +62,21 @@
                         <p><strong>Start Date:</strong> {{ experiment.experiment_start }}</p>
                         <p><strong>End Date:</strong> {{ experiment.experiment_end }}</p>
                         <p><strong>Status:</strong> {{ experiment.status }}</p>
-                        <p><strong>Collaborators:</strong> {{ experiment.collaborators}}</p>
+                        <p><strong>Collaborators:</strong>
+                            {% if experiment.collaborators %}
+                                {{ experiment.collaborators | join(', ') }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </p>
                         <p><strong>Constraints:</strong> {% if experiment.constraints %}
                             <ul>
                                 {% for constraint in experiment.constraints %}
                                     <li>
                                         <strong>ID:</strong> {{ constraint.id }},
-                                        <strong>On:</strong> {{ constraint.on }},
-                                        <strong>Is Hard:</strong> {{constraint.is_hard }},
-                                        <strong>How:</strong> {{constraint.how }}
+                                        <strong>On:</strong> {{ constraint.on_component }},
+                                        <strong>Is Hard:</strong> {{ constraint.is_hard }},
+                                        <strong>How:</strong> {{ constraint.how }}
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -128,15 +134,15 @@
                                     <div class="card-header processing">Models</div>
                                     <div class="card-body">
                                         {% if variabilityPoints.model %}
-                                        <ul>
-                                            {% for model in variabilityPoints.model %}
-                                                <li>
-                                                    <strong>Algorithm:</strong> {{ model.algorithm }}<br>
-                                                    <strong>Parameter:</strong> {{ model.parameter }}<br>
-                                                    <strong>Parameter Values:</strong> {{ model.parameter_value }}
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
+                                            <ul>
+                                                {% for model in variabilityPoints.model %}
+                                                    <li>
+                                                        <strong>Algorithm:</strong> {{ model.algorithm }}<br>
+                                                        <strong>Parameter:</strong> {{ model.parameter }}<br>
+                                                        <strong>Parameter Value:</strong> {{ model.parameter_value }}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
                                         {% else %}
                                             <p>No models available.</p>
                                         {% endif %}
@@ -151,9 +157,11 @@
                                     {% if variabilityPoints.dataSet %}
                                         <ul>
                                             {% for dataset in variabilityPoints.dataSet %}
-                                                <li><strong>Dataset Name:</strong> {{ dataset.name }}</li>
-                                                <li><strong>Dataset Path:</strong> {{ dataset.zenoh_key_expr }}</li>
-                                                <li><strong>Reviewer Score:</strong> {{ dataset.reviewer_score }}</li>
+                                                <li>
+                                                    <strong>Dataset Name:</strong> {{ dataset.name }}<br>
+                                                    <strong>Dataset Path:</strong> {{ dataset.zenoh_key_expr }}<br>
+                                                    <strong>Reviewer Score:</strong> {{ dataset.reviewer_score }}
+                                                </li>
                                             {% endfor %}
                                         </ul>
                                     {% else %}
@@ -221,11 +229,11 @@
                     {% if evaluation %}
                         <ul>
                             {% for eval in evaluation %}
-                            <li>
-                                <strong>Metric name:</strong> {{ eval.name }} <br>
-                                <strong>Metrics value:</strong> {{ eval.value }}
+                                <li>
+                                    <strong>Metric name:</strong> {{ eval.name }}<br>
+                                    <strong>Metric value:</strong> {{ eval.value }}
+                                </li>
                             {% endfor %}
-                            </li>
                         </ul>
                     {% else %}
                         <p>No evaluation metrics available.</p>
