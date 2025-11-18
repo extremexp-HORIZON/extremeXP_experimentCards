@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 import logging
 from http.client import HTTPException
 from dotenv import load_dotenv
+from types import SimpleNamespace
 
 
 load_dotenv()
@@ -48,6 +49,7 @@ if not ACCESS_TOKEN:
 EXPERIMENT_ID = "jZa-mJQBZTyxy1ACX1W8"
 # BASE_URL = "https://api.expvis.smartarch.cz/api"
 BASE_URL = "https://api.dal.extremexp-icom.intracom-telecom.com/api"
+EXCLUDED_METRICS = {"lessonsLearnt", "experimentRating", "runRatings"}
 
 
 def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", parent_type="experiment"):
@@ -115,6 +117,8 @@ def experiment_details_realData(experiment_id):
     for dataset in datasets:
         logging.info(vars(dataset))  # Logs all attributes of the dataset object
 
+    filtered_evaluation = [metric for metric in evaluation if metric.name not in EXCLUDED_METRICS]
+
     variabilityPoints = {
         "dataSet": datasets,
         "model": models
@@ -129,7 +133,7 @@ def experiment_details_realData(experiment_id):
         datasets=datasets,
         lessons=lessons,
         variabilityPoints=variabilityPoints,
-        evaluation=evaluation
+        evaluation=filtered_evaluation
     )
 
 @app.route('/experiment_details/<experiment_id>', methods=['GET'])
@@ -245,26 +249,9 @@ def submit_form(experiment_id):
         if any(r < 1 or r > 7 for r in run_ratings):
             return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg="Each run rating must be between 1 and 7 (inclusive)."))
 
-        # Add metrics to DAL
         response_lessons = add_metric(experiment_id, "lessonsLearnt", lessons_learnt, "string")
         response_experiment = add_metric(experiment_id, "experimentRating", str(experiment_rating), "string")
-        response_runs = add_metric(experiment_id, "runRatings", str(run_ratings), "series")
-
-        try:
-            lesson_learnt_entry = LessonLearnt(
-                lessons_learnt_id = f"lessons_learnt_{experiment_id}",
-                experiment_id=experiment_id,
-                lessons_learnt=lessons_learnt,
-                experiment_rating=experiment_rating,
-                run_rating=run_ratings
-            )
-            db.session.add(lesson_learnt_entry)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            logging.error(f"Failed to insert metrics into the database: {e}")
-            return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg=f"Failed to insert metrics into the database for experiment with id {experiment_id}."))
-
+        response_runs = add_metric(experiment_id, "runRatings", json.dumps(run_ratings), "series")
 
         if not response_lessons.get("success", False):
             return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg=f"Failed to insert lessons learnt metric for experiment with id {experiment_id}."))
@@ -272,6 +259,40 @@ def submit_form(experiment_id):
             return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg=f"Failed to insert experiment rating metric for experiment with id {experiment_id}."))
         if not response_runs.get("success", False):
             return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg=f"Failed to insert run ratings metric for experiment with id {experiment_id}."))
+
+        def upsert_metric(metric_name, metric_value):
+            metric_id = f"{experiment_id}_{metric_name}"
+            metric_row = EvaluationMetric.query.filter_by(metric_id=metric_id, experiment_id=experiment_id).first()
+            if metric_row:
+                metric_row.name = metric_name
+                metric_row.value = metric_value
+            else:
+                db.session.add(EvaluationMetric(metric_id=metric_id, experiment_id=experiment_id, name=metric_name, value=metric_value))
+
+        try:
+            entry = LessonLearnt.query.filter_by(lessons_learnt_id=f"lessons_learnt_{experiment_id}", experiment_id=experiment_id).first()
+            if entry:
+                entry.lessons_learnt = lessons_learnt
+                entry.experiment_rating = experiment_rating
+                entry.run_rating = run_ratings
+            else:
+                db.session.add(LessonLearnt(
+                    lessons_learnt_id = f"lessons_learnt_{experiment_id}",
+                    experiment_id=experiment_id,
+                    lessons_learnt=lessons_learnt,
+                    experiment_rating=experiment_rating,
+                    run_rating=run_ratings
+                ))
+
+            upsert_metric("lessonsLearnt", lessons_learnt)
+            upsert_metric("experimentRating", str(experiment_rating))
+            upsert_metric("runRatings", json.dumps(run_ratings))
+
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Failed to insert metrics into the database: {e}")
+            return redirect(url_for("message_page", experiment_id=experiment_id, status="error", msg=f"Failed to insert metrics into the database for experiment with id {experiment_id}."))
 
         return redirect(url_for("message_page", experiment_id=experiment_id, status="success", msg=f"Metrics successfully inserted for experiment with id {experiment_id}!"))
 
@@ -357,8 +378,30 @@ def query_experiments_page():
         ).filter(Experiment.experiment_id.in_(experiment_ids)).order_by(Experiment.experiment_id)
 
         results = details_query.all()
+        def row_to_namespace(row):
+            if hasattr(row, "_mapping"):
+                data = dict(row._mapping)
+            elif isinstance(row, dict):
+                data = dict(row)
+            else:
+                data = row.__dict__.copy()
+            return data
+
         for key, group in groupby(results, key=lambda x: x.experiment_id):
-            grouped_results.append(list(group))
+            rows = list(group)
+            filtered_rows = []
+            for row in rows:
+                data = row_to_namespace(row)
+                metric_name = data.get("metric_name")
+                if metric_name and metric_name in EXCLUDED_METRICS:
+                    continue
+                filtered_rows.append(SimpleNamespace(**data))
+            if not filtered_rows and rows:
+                data = row_to_namespace(rows[0])
+                data["metric_name"] = None
+                data["metric_value"] = None
+                filtered_rows.append(SimpleNamespace(**data))
+            grouped_results.append(filtered_rows)
 
     filter_params = {k: v for k, v in filters.items() if v}
 
