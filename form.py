@@ -251,7 +251,10 @@ def experiment_details(experiment_id):
 
 @app.route("/form_lessons_learnt/<experiment_id>", methods=["GET"])
 def form(experiment_id):
-    return render_template("form_lessons_learnt.html", experiment_id=experiment_id)
+    template_name = (
+        "form_lessons_learnt.html" if _is_ajax_request() else "form_lessons_learnt_page.html"
+    )
+    return render_template(template_name, experiment_id=experiment_id)
 
 
 @app.route('/experiments', methods=['GET'])
