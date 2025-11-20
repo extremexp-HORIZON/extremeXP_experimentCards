@@ -114,51 +114,51 @@
                 </tr>
             </thead>
             <tbody>
-                {% for group in results %}
+                {% for exp in results %}
                 <tr>
-                    <td>{{ group[0].experiment_id }}</td>
-                    <td>{{ group[0].experiment_name }}</td>
-                    <td>{{ group[0].experiment_start }}</td>
-                    <td>{{ group[0].experiment_end }}</td>
-                    <td>{{ group[0].intent }}</td>
-                    <td>{{ group[0].lessons_learnt }}</td>
-                    <td>{{ group[0].dataset_name }}</td>
+                    <td>{{ exp.experiment_id }}</td>
+                    <td>{{ exp.experiment_name }}</td>
+                    <td>{{ exp.experiment_start }}</td>
+                    <td>{{ exp.experiment_end }}</td>
+                    <td>{{ exp.intent }}</td>
+                    <td>{{ exp.lessons_learnt }}</td>
+                    <td>{{ exp.dataset_name }}</td>
                     <td>
-                        {% if group[0].experiment_rating is not none %}
-                            {% for i in range(group[0].experiment_rating) %}
-                                <span class="text-warning">&#9733;</span> <!-- Filled star -->
+                        {% if exp.experiment_rating is not none %}
+                            {% for i in range(exp.experiment_rating) %}
+                                <span class="text-warning">&#9733;</span>
                             {% endfor %}
-                            {% for i in range(7 - group[0].experiment_rating) %}
-                                <span class="text-secondary">&#9734;</span> <!-- Empty star -->
+                            {% for i in range(7 - exp.experiment_rating) %}
+                                <span class="text-secondary">&#9734;</span>
                             {% endfor %}
                         {% else %}
                             <span class="text-muted">No rating available</span>
                         {% endif %}
                     </td>
                     <td>
-                        {% if group[0].collaborators %}
-                            {{ group[0].collaborators | join(', ') }}
+                        {% if exp.collaborators %}
+                            {{ exp.collaborators | join(', ') }}
                         {% else %}
                             N/A
                         {% endif %}
                     </td>
-                    <td>{{ group[0].status }}</td>
+                    <td>{{ exp.status }}</td>
                     <td>
-                        <button type="button" class="btn btn-info btn-sm view-details-btn" data-experiment-id="{{ group[0].experiment_id }}">
+                        <button type="button" class="btn btn-info btn-sm view-details-btn" data-experiment-id="{{ exp.experiment_id }}">
                             View Card
                         </button>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#details-{{ group[0].experiment_id }}" aria-expanded="false" aria-controls="details-{{ group[0].experiment_id }}">
+                        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#details-{{ exp.experiment_id }}" aria-expanded="false" aria-controls="details-{{ exp.experiment_id }}">
                             View Details
                         </button>
                     </td>
                     <td>
-                        {% set has_lessons = group | selectattr('lessons_learnt') | selectattr('lessons_learnt') | list %}
+                        {% set has_lessons = exp.lessons_learnt %}
                         <button
                             class="btn btn-sm btn-success submit-lessons-btn"
                             type="button"
-                            data-experiment-id="{{ group[0].experiment_id }}"
+                            data-experiment-id="{{ exp.experiment_id }}"
                             {% if has_lessons %}
                                 disabled
                                 title="Lessons already submitted"
@@ -168,7 +168,7 @@
                         </button>
                     </td>
                 </tr>
-                <tr class="collapse" id="details-{{ group[0].experiment_id }}">
+                <tr class="collapse" id="details-{{ exp.experiment_id }}">
                     <td colspan="12">
                         <table class="table table-sm">
                             <thead>
@@ -178,12 +178,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% set metric_rows = group | selectattr('metric_name') | list %}
-                                {% if metric_rows %}
-                                    {% for row in metric_rows %}
+                                {% if exp.metrics %}
+                                    {% for metric in exp.metrics %}
                                         <tr>
-                                            <td>{{ row.metric_name }}</td>
-                                            <td>{{ row.metric_value }}</td>
+                                            <td>{{ metric.name or metric.metric_id }}</td>
+                                            <td>{{ metric.value }}</td>
                                         </tr>
                                     {% endfor %}
                                 {% else %}

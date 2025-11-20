@@ -1,9 +1,12 @@
+import atexit
 import json
 import logging
 import os
+from datetime import datetime
 from itertools import groupby
+from threading import Event, Thread
 from types import SimpleNamespace
-from typing import Iterable, List, Optional, Sequence
+from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 import requests
 from dotenv import load_dotenv
@@ -53,11 +56,11 @@ app, db = create_app()
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 
-ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+ACCESS_TOKEN = Config.ACCESS_TOKEN
 if not ACCESS_TOKEN:
     raise RuntimeError("ACCESS_TOKEN environment variable is not set.")
 
-BASE_URL = "https://api.dal.extremexp-icom.intracom-telecom.com/api"
+BASE_URL = Config.DAL_BASE_URL
 EXCLUDED_METRICS = {"lessonsLearnt", "experimentRating", "runRatings"}
 
 
@@ -438,6 +441,7 @@ def query_experiments_page():
             Experiment.intent,
             ExperimentRequirement.metric,
             ExperimentModel.algorithm,
+            EvaluationMetric.metric_id.label("metric_id"),
             EvaluationMetric.name.label("metric_name"),
             EvaluationMetric.value.label("metric_value"),
             LessonLearnt.lessons_learnt,
@@ -467,19 +471,23 @@ def query_experiments_page():
 
         for key, group in groupby(results, key=lambda x: x.experiment_id):
             rows = list(group)
-            filtered_rows = []
+            base_data = row_to_namespace(rows[0])
+            metric_entries = []
+            seen_metric_ids = set()
             for row in rows:
                 data = row_to_namespace(row)
+                metric_id = data.get("metric_id")
                 metric_name = data.get("metric_name")
+                metric_value = data.get("metric_value")
+                if not metric_id or metric_id in seen_metric_ids:
+                    continue
+                seen_metric_ids.add(metric_id)
                 if metric_name and metric_name in EXCLUDED_METRICS:
                     continue
-                filtered_rows.append(SimpleNamespace(**data))
-            if not filtered_rows and rows:
-                data = row_to_namespace(rows[0])
-                data["metric_name"] = None
-                data["metric_value"] = None
-                filtered_rows.append(SimpleNamespace(**data))
-            grouped_results.append(filtered_rows)
+                metric_entries.append(SimpleNamespace(metric_id=metric_id, name=metric_name, value=metric_value))
+            experiment_namespace = SimpleNamespace(**base_data)
+            experiment_namespace.metrics = metric_entries
+            grouped_results.append(experiment_namespace)
 
     filter_params = {k: v for k, v in filters.items() if v}
 
@@ -536,6 +544,105 @@ def extract_experiment_data(workflows_list):
                     experiment_info["trained_model_output"] = dataset.get("uri")
     return experiment_info
 
+
+def _parse_iso_datetime(value: Optional[str]) -> Optional[datetime]:
+    if not value:
+        return None
+    try:
+        normalized = value.replace("Z", "+00:00")
+        return datetime.fromisoformat(normalized)
+    except ValueError:
+        return None
+
+
+def _first_datetime_from_list(values: Iterable[Optional[str]]) -> Optional[datetime]:
+    for candidate in values or []:
+        dt = _parse_iso_datetime(candidate)
+        if dt:
+            return dt
+    return None
+
+
+def _last_datetime_from_list(values: Iterable[Optional[str]]) -> Optional[datetime]:
+    sequence = list(values or [])
+    for candidate in reversed(sequence):
+        dt = _parse_iso_datetime(candidate)
+        if dt:
+            return dt
+    return None
+
+
+def _safe_float(value: Any) -> Optional[float]:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _collect_constraints_from_workflows(workflows: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    constraints = []
+    seen = set()
+    for workflow in workflows or []:
+        workflow_id = workflow.get("workflowId") or workflow.get("id") or "workflow"
+        for task in workflow.get("tasks", []) or []:
+            task_id = task.get("id") or task.get("name") or "task"
+            constraint_id = f"{workflow_id}_{task_id}_constraint"
+            if constraint_id in seen:
+                continue
+            seen.add(constraint_id)
+            constraints.append({
+                "id": constraint_id,
+                "on_component": task.get("name") or task_id,
+                "is_hard": task.get("type") == "hard",
+                "how": task.get("comment") or workflow.get("comment") or "Derived from workflow definition",
+            })
+    return constraints
+
+
+def _collect_requirements_from_metrics(metrics: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    requirements = []
+    seen = set()
+    for metric in metrics or []:
+        metric_id = metric.get("metricId") or metric.get("name")
+        if not metric_id or metric_id in seen:
+            continue
+        seen.add(metric_id)
+        requirements.append({
+            "id": metric_id,
+            "metric": metric.get("name") or "metric",
+            "method": metric.get("type") or metric.get("aggregation", {}).get("type") or "derived",
+            "objective": metric.get("semantic_type") or "measure",
+        })
+    return requirements
+
+
+def _collect_model_entries_from_workflows(workflows: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    entries = []
+    for workflow in workflows or []:
+        algorithm = workflow.get("name") or workflow.get("workflowId")
+        for task in workflow.get("tasks", []) or []:
+            task_algorithm = task.get("name") or algorithm
+            for param in task.get("parameters", []) or []:
+                entries.append({
+                    "algorithm": task_algorithm or algorithm,
+                    "parameter": param.get("name"),
+                    "parameter_value": _safe_float(param.get("value")),
+                })
+    return entries
+
+
+def _normalize_metric_value(metric: Dict[str, Any]) -> str:
+    records = metric.get("records")
+    if records is None:
+        value = metric.get("value")
+        return str(value) if value is not None else ""
+    if isinstance(records, (list, dict)):
+        try:
+            return json.dumps(records)
+        except (TypeError, ValueError):
+            return str(records)
+    return str(records)
+
 def fetch_experiment_data(experiment_id):
     headers = {"access-token": ACCESS_TOKEN}
     experiment_url = f"{BASE_URL}/experiments/{experiment_id}"
@@ -551,6 +658,9 @@ def fetch_experiment_data(experiment_id):
     metrics_semantic_types = []
     record_values = []
 
+    status = data.get("status") or "NA"
+    user_interactions = data.get("userInteraction") or []
+    latest_workflow_end = None
     for workflow_id in workflow_ids:
         workflow_endpoint = f"{BASE_URL}/workflows/{workflow_id}"
         workflow_response = requests.get(workflow_endpoint, headers=headers)
@@ -561,12 +671,12 @@ def fetch_experiment_data(experiment_id):
 
             start_dates.append(start_date if start_date else None)
             end_dates.append(end_date if end_date else None)
-            status = workflow_data.get("status", "NA")
+            workflow_status = workflow_data.get("status", "NA")
             metrics = workflow_data.get("metrics", [])
             workflows_list.append({
                 "workflowId": workflow_id,
                 "tasks": workflow_data.get("tasks", []),
-                "status": status
+                "status": workflow_status
             })
             for metric_entry in metrics:
                 for metric_id, metric_details in metric_entry.items():
@@ -590,7 +700,14 @@ def fetch_experiment_data(experiment_id):
                     })
                     if "semantic_type" in metric_details:
                         metrics_semantic_types.append(metric_details["semantic_type"])
-            user_interactions = [{"stoppedByUser": "NA"}] * len(record_values)
+            if not user_interactions:
+                user_interactions = [{"stoppedByUser": "NA"}] * max(1, len(record_values))
+            end_dt = _parse_iso_datetime(end_date)
+            if end_dt and (latest_workflow_end is None or end_dt > latest_workflow_end):
+                latest_workflow_end = end_dt
+                status = workflow_status
+    if not user_interactions:
+        user_interactions = [{"stoppedByUser": "NA"}]
     extracted_data = extract_experiment_data(workflows_list)
     experiment_data = {
         "experimentCard": {
@@ -654,67 +771,123 @@ def insert_data_from_json(data):
             raise ValueError("experimentInfo section missing from payload")
 
         logging.info("Persisting experiment %s from JSON payload", experiment_id)
-        experiment = Experiment(
-            experiment_id=experiment_id,
-            experiment_name=experiment_info["experimentName"],
-            experiment_start=experiment_info["experimentStartDate"][0],  
-            experiment_end=experiment_info["experimentEndDate"][-1], 
-            status=experiment_info["status"],
-            collaborators=experiment_info["collaborators"],
-            intent=experiment_info["intent"]
-        )
-        db.session.add(experiment)
+        workflows = data.get("experimentCard", {}).get("variabilityPoints", {}).get("processing", {}).get("workflow", [])
+        metrics = data.get("experimentCard", {}).get("evaluation", {}).get("runMetrics", [])
+        dataset_info = data.get("experimentCard", {}).get("variabilityPoints", {}).get("dataSet", {}) or {}
 
-        for constraint in experiment_info["constraints"]:
-            experiment_constraint = ExperimentConstraint(
-                id=constraint["id"],
-                on_component=constraint["on"],
-                is_hard=constraint["isHard"],
-                how=constraint["how"],
-                experiment_id=experiment_id,
-            )
-            db.session.add(experiment_constraint)
+        workflow_start = _first_datetime_from_list(workflow.get("start") for workflow in workflows)
+        workflow_end = _last_datetime_from_list(workflow.get("end") for workflow in workflows)
+        experiment_start = _first_datetime_from_list(experiment_info.get("experimentStartDate", [])) or workflow_start
+        experiment_end = _last_datetime_from_list(experiment_info.get("experimentEndDate", [])) or workflow_end
 
-        for requirement in experiment_info["requirements"]:
-            experiment_requirement = ExperimentRequirement(
-                id=requirement["id"],
-                metric=requirement["metric"],
-                method=requirement["method"],
-                objective=requirement["objective"],
-                experiment_id=experiment_id,
-            )
-            db.session.add(experiment_requirement)
+        experiment = Experiment.query.get(experiment_id)
+        if not experiment:
+            experiment = Experiment(experiment_id=experiment_id)
+            db.session.add(experiment)
 
-        dataset_info = data["experimentCard"]["variabilityPoints"].get("dataSet")
-        if dataset_info:
-            experiment_dataset = ExperimentDataset(
-                id_dataset=dataset_info.get("id_dataset"),
-                name=dataset_info.get("name"),
-                zenoh_key_expr=dataset_info.get("zenoh_key_expr"),
-                reviewer_score=dataset_info.get("reviewer_score"),
-                experiment_id=experiment_id,
-            )
-            db.session.add(experiment_dataset)
+        experiment.experiment_name = experiment_info.get("experimentName")
+        experiment.experiment_start = experiment_start
+        experiment.experiment_end = experiment_end
+        experiment.status = experiment_info.get("status")
+        experiment.collaborators = experiment_info.get("collaborators") or []
+        experiment.intent = experiment_info.get("intent")
 
-        model_info = data["experimentCard"]["variabilityPoints"].get("model") or {}
-        for workflow_id, parameters in (model_info.get("parameters") or {}).items():
-            for param in parameters:
-                experiment_model = ExperimentModel(
-                    algorithm=model_info.get("algorithm"),
-                    parameter=param.get("name"),
-                    parameter_value=param.get("value"),
+        ExperimentConstraint.query.filter_by(experiment_id=experiment_id).delete()
+        ExperimentRequirement.query.filter_by(experiment_id=experiment_id).delete()
+        ExperimentModel.query.filter_by(experiment_id=experiment_id).delete()
+        EvaluationMetric.query.filter_by(experiment_id=experiment_id).delete()
+
+        constraint_records = []
+        seen_constraint_ids = set()
+        for constraint in experiment_info.get("constraints", []):
+            constraint_id = constraint.get("id") or f"{experiment_id}_constraint_{len(constraint_records)}"
+            seen_constraint_ids.add(constraint_id)
+            constraint_records.append({
+                "id": constraint_id,
+                "on_component": constraint.get("on"),
+                "is_hard": constraint.get("isHard") is True,
+                "how": constraint.get("how"),
+            })
+        for derived in _collect_constraints_from_workflows(workflows):
+            if derived["id"] in seen_constraint_ids:
+                continue
+            seen_constraint_ids.add(derived["id"])
+            constraint_records.append(derived)
+        for constraint in constraint_records:
+            db.session.add(
+                ExperimentConstraint(
+                    id=constraint["id"],
+                    on_component=constraint["on_component"],
+                    is_hard=constraint["is_hard"],
+                    how=constraint["how"],
                     experiment_id=experiment_id,
                 )
-                db.session.add(experiment_model)
+            )
 
-        for metric in data["experimentCard"]["evaluation"]["runMetrics"]:
-            evaluation_metric = EvaluationMetric(
-                metric_id=metric["metricId"],
-                name=metric["name"],
-                value=metric["records"],
+        requirement_records = []
+        seen_requirement_ids = set()
+        for requirement in experiment_info.get("requirements", []):
+            req_id = requirement.get("id") or f"{experiment_id}_requirement_{len(requirement_records)}"
+            seen_requirement_ids.add(req_id)
+            requirement_records.append({
+                "id": req_id,
+                "metric": requirement.get("metric"),
+                "method": requirement.get("method"),
+                "objective": requirement.get("objective"),
+            })
+        for derived in _collect_requirements_from_metrics(metrics):
+            if derived["id"] in seen_requirement_ids:
+                continue
+            seen_requirement_ids.add(derived["id"])
+            requirement_records.append(derived)
+        for requirement in requirement_records:
+            db.session.add(
+                ExperimentRequirement(
+                    id=requirement["id"],
+                    metric=requirement["metric"],
+                    method=requirement["method"],
+                    objective=requirement["objective"],
+                    experiment_id=experiment_id,
+                )
+            )
+
+        dataset = ExperimentDataset.query.filter_by(experiment_id=experiment_id).first()
+        dataset_id_value = dataset_info.get("id_dataset") or dataset_info.get("path") or f"{experiment_id}_dataset"
+        if not dataset:
+            dataset = ExperimentDataset(
+                id_dataset=dataset_id_value,
                 experiment_id=experiment_id,
             )
-            db.session.add(evaluation_metric)
+            db.session.add(dataset)
+        dataset.id_dataset = dataset_id_value
+        dataset.name = dataset_info.get("name") or dataset_info.get("path")
+        dataset.zenoh_key_expr = dataset_info.get("zenoh_key_expr") or dataset_info.get("path")
+        dataset.reviewer_score = dataset_info.get("reviewer_score")
+
+        model_entries = _collect_model_entries_from_workflows(workflows)
+        for entry in model_entries:
+            parameter = entry.get("parameter")
+            if not parameter:
+                continue
+            db.session.add(
+                ExperimentModel(
+                    algorithm=entry.get("algorithm"),
+                    parameter=parameter,
+                    parameter_value=entry.get("parameter_value"),
+                    experiment_id=experiment_id,
+                )
+            )
+
+        for metric in metrics or []:
+            metric_id = metric.get("metricId") or f"{experiment_id}_{metric.get('name', 'metric')}"
+            db.session.add(
+                EvaluationMetric(
+                    metric_id=metric_id,
+                    name=metric.get("name"),
+                    value=_normalize_metric_value(metric),
+                    experiment_id=experiment_id,
+                )
+            )
 
         db.session.commit()
         logging.info("Experiment %s inserted successfully!", experiment_id)
@@ -761,6 +934,90 @@ def update_experiment(experiment_id):
         return jsonify({"message": f"Experiment data saved successfully to {file_path}"}), 200
     except Exception as e:
         return jsonify({"error": f"Failed to save experiment data: {str(e)}"}), 500
+
+
+
+
+class DALSQLSyncer:
+    def __init__(self, application, interval_minutes: int):
+        self.application = application
+        self.interval_seconds = max(30, int(interval_minutes) * 60)
+        self.session = requests.Session()
+        self.session.headers.update(
+            {
+                "access-token": ACCESS_TOKEN,
+                "Accept": "application/json",
+            }
+        )
+        self._stop_event = Event()
+        self._thread = Thread(target=self._run, daemon=True)
+
+    def start(self):
+        if not self._thread.is_alive():
+            logging.info("Starting DAL SQL sync thread (interval=%s seconds)", self.interval_seconds)
+            self._thread.start()
+
+    def stop(self):
+        logging.info("Stopping DAL SQL sync thread")
+        self._stop_event.set()
+        self._thread.join(timeout=5)
+
+    def _run(self):
+        while not self._stop_event.is_set():
+            try:
+                self.sync_once()
+            except Exception as exc:
+                logging.exception("DAL SQL sync failed: %s", exc)
+            if self._stop_event.wait(self.interval_seconds):
+                break
+
+    def sync_once(self):
+        experiment_ids = self._list_experiment_ids()
+        if not experiment_ids:
+            return
+        with self.application.app_context():
+            for experiment_id in experiment_ids:
+                try:
+                    experiment_data = fetch_experiment_data(experiment_id)
+                    insert_data_from_json(experiment_data)
+                except Exception as exc:
+                    logging.exception("Failed to sync experiment %s: %s", experiment_id, exc)
+
+    def _list_experiment_ids(self) -> List[str]:
+        payload = self._fetch_payload("experiments")
+        experiments = payload.get("experiments") if payload else []
+        ids = []
+        for entry in experiments:
+            if isinstance(entry, dict) and entry:
+                ids.append(next(iter(entry.keys())))
+        return ids
+
+    def _fetch_payload(self, endpoint: str) -> Optional[Dict[str, Any]]:
+        url = f"{BASE_URL.rstrip('/')}/{endpoint}"
+        try:
+            response = self.session.get(url, timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as exc:
+            logging.warning("Failed to fetch %s: %s", endpoint, exc)
+        except ValueError:
+            logging.warning("DAL returned invalid JSON for %s", endpoint)
+        return None
+
+
+def _initialize_dal_sql_sync(application):
+    if not Config.DAL_SYNC_ENABLED:
+        logging.debug("DAL sync disabled via configuration")
+        return None
+    syncer = DALSQLSyncer(application, Config.DAL_SYNC_INTERVAL_MINUTES)
+    syncer.start()
+    return syncer
+
+
+dal_sql_syncer = _initialize_dal_sql_sync(app)
+if dal_sql_syncer:
+    atexit.register(dal_sql_syncer.stop)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)

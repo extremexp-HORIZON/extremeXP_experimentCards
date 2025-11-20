@@ -199,21 +199,34 @@ def _collect_model_parameters(experiment: Experiment, workflows: List[Dict[str, 
                 _append_entry(task_algo, param.get("name"), param.get("value"))
     return entries
 
+def _normalize_metric_entry(metric: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(metric, dict):
+        return {}
+    if len(metric) == 1:
+        key, value = next(iter(metric.items()))
+        if isinstance(value, dict):
+            normalized = value.copy()
+            normalized.setdefault("id", key)
+            return normalized
+    return metric
+
+
 def _collect_workflow_metrics(workflows: List[Dict[str, Any]], experiment_id: str, existing_ids: set) -> List[EvaluationMetric]:
     rows = []
     def _append_metric(source_id, metric, index):
-        if not isinstance(metric, dict):
+        normalized_metric = _normalize_metric_entry(metric)
+        if not normalized_metric:
             return
-        metric_id = metric.get("id") or f"{source_id}_{index}"
+        metric_id = normalized_metric.get("id") or f"{source_id}_{index}"
         original_id = metric_id
         suffix = index
         while metric_id in existing_ids:
             suffix += 1
             metric_id = f"{original_id}_{suffix}"
         existing_ids.add(metric_id)
-        value = metric.get("value")
+        value = normalized_metric.get("value")
         if value is None:
-            records = metric.get("records")
+            records = normalized_metric.get("records")
             if isinstance(records, list):
                 values = [
                     record.get("value")
@@ -227,7 +240,7 @@ def _collect_workflow_metrics(workflows: List[Dict[str, Any]], experiment_id: st
             EvaluationMetric(
                 metric_id=metric_id,
                 experiment_id=experiment_id,
-                name=metric.get("name"),
+                name=normalized_metric.get("name"),
                 value=str(value) if value is not None else None,
             )
         )

@@ -27,7 +27,11 @@ Before running the application, ensure you have the Docker installed.
    Create a `.env` file in the project root and add the following:
    ```properties
    ACCESS_TOKEN=your_access_token_here
+   DAL_SYNC_ENABLED=true
+   DAL_SYNC_INTERVAL_MINUTES=15
+   DAL_BASE_URL=https://api.dal.extremexp-icom.intracom-telecom.com/api
    ```
+   Enabling the sync causes the application to poll the DAL `/experiments` feed every `DAL_SYNC_INTERVAL_MINUTES` to grab the latest experiment/workflow/metric payloads and insert/update the SQL tables through the same ingestion logic used by `/newExperiment/<id>` and `/updateExperiment/<id>`. Adjust the interval or set `DAL_SYNC_ENABLED=false` if you want to disable the periodic job.
 
 3. **Build the Docker Image**:
    Use Docker Compose to build the application image:
