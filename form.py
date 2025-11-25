@@ -8,6 +8,8 @@ from threading import Event, Thread
 from types import SimpleNamespace
 from typing import Any, Dict, Iterable, List, Optional, Sequence
 
+
+from sqlalchemy import text
 import requests
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, redirect, url_for
@@ -47,6 +49,15 @@ def create_app():
     with app.app_context():
         db.create_all()
         try:
+            # with db.session.begin():
+            #     db.session.execute(text("TRUNCATE TABLE lessons_learnt RESTART IDENTITY CASCADE"))
+            #     db.session.execute(text("TRUNCATE TABLE evaluation_metrics RESTART IDENTITY CASCADE"))
+            #     db.session.execute(text("TRUNCATE TABLE experiment_models RESTART IDENTITY CASCADE"))
+            #     db.session.execute(text("TRUNCATE TABLE experiment_datasets RESTART IDENTITY CASCADE"))
+            #     db.session.execute(text("TRUNCATE TABLE experiment_requirements RESTART IDENTITY CASCADE"))
+            #     db.session.execute(text("TRUNCATE TABLE experiment_constraints RESTART IDENTITY CASCADE"))
+            #     db.session.execute(text("TRUNCATE TABLE experiments RESTART IDENTITY CASCADE"))
+            # app.logger.info("All tables cleared.")
             load_and_insert(db)
             app.logger.info("Database populated successfully!")
         except Exception as e:
