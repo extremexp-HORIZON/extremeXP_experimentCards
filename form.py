@@ -101,15 +101,24 @@ def add_metric(experiment_id, name, value, metric_type="string", kind="scalar", 
         return {"success": False, "error": str(e)}
 
 
+from werkzeug.exceptions import NotFound
+
 def _query_experiment_entities(experiment_id: str):
-    experiment = Experiment.query.get_or_404(experiment_id)
-    requirements = ExperimentRequirement.query.filter_by(experiment_id=experiment_id).all()
-    models = ExperimentModel.query.filter_by(experiment_id=experiment_id).all()
-    datasets = ExperimentDataset.query.filter_by(experiment_id=experiment_id).all()
-    lessons = LessonLearnt.query.filter_by(experiment_id=experiment_id).all()
-    evaluation = EvaluationMetric.query.filter_by(experiment_id=experiment_id).all()
+    experiment = db.session.get(Experiment, experiment_id)
+    if not experiment:
+        raise NotFound()
+
+    requirements = db.session.query(ExperimentRequirement).filter_by(experiment_id=experiment_id).all()
+    models = db.session.query(ExperimentModel).filter_by(experiment_id=experiment_id).all()
+    datasets = db.session.query(ExperimentDataset).filter_by(experiment_id=experiment_id).all()
+    lessons = db.session.query(LessonLearnt).filter_by(experiment_id=experiment_id).all()
+    evaluation = db.session.query(EvaluationMetric).filter_by(experiment_id=experiment_id).all()
     return experiment, requirements, models, datasets, lessons, evaluation
 
+@app.errorhandler(NotFound)
+def log_not_found(err):
+    app.logger.warning("404 path=%s view_args=%s args=%s", request.path, getattr(request, "view_args", None), dict(request.args))
+    return err, 404
 
 def _log_experiment_snapshot(experiment, requirements, models, datasets, lessons, evaluation):
     logging.info("Experiment: %s", experiment)
@@ -225,7 +234,12 @@ def experiment_details_realData(experiment_id):
 
 @app.route('/experiment_details/<experiment_id>', methods=['GET'])
 def experiment_details(experiment_id):
-    experiment, requirements, models, datasets, lessons, evaluation = _query_experiment_entities(experiment_id)
+    app.logger.info("GET /experiment_details_realData id=%s url=%s", experiment_id, request.url)
+    try:
+        experiment, requirements, models, datasets, lessons, evaluation = _query_experiment_entities(experiment_id)
+    except NotFound:
+        app.logger.warning("Experiment %s not found in DB", experiment_id)
+        raise
     _log_experiment_snapshot(experiment, requirements, models, datasets, lessons, evaluation)
 
     variabilityPoints = {
