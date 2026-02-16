@@ -1,0 +1,177 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "ex": "https://example.org/experiment-card#",
+    "cr": "http://mlcommons.org/croissant/",
+    "hf": "https://huggingface.co/metadata#"
+  },
+  "@type": "ex:ExperimentCard",
+  "ex:experimentInfo": {
+    "experimentId": "hiaugfhkjfhjhf",
+    "experimentName": "ORGANIZATION_EXAMPLE_main",
+    "intent": "Classification",
+    "status": "completed",
+    "experimentStartDate": 
+      "2025-06-24T15:36:47Z",
+    "experimentEndDate": 
+      "2025-06-24T15:39:48Z",
+    "collaborators": ["John Doe", "Jane Smith"],
+    "experimentDescription": "This experiment aims to evaluate the performance of different machine learning models",
+    "userInteraction": 
+      {
+        "stoppedByUser": false
+      },
+    "constraints": [
+      {
+        "id": "Constraint01",
+        "on_component": "SVM",
+        "is_hard": true,
+        "how": "Use"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "Requirement01",
+        "metric": "Accuracy",
+        "method": "CrossValidation",
+        "objective": "Maximize"
+      }
+    ]
+  },
+  "ex:variabilityPoints": {
+    "dataSet": {
+      "@type": "cr:Dataset",
+      "id_dataset": "exp_engine/library-datasets/v1/org-subset/**",
+      "name": "ORG-subset",
+      "zenoh_key_expr": null,
+      "reviewer_score": null,
+      "cr:recordSet": {
+        "@type": "cr:RecordSet",
+        "name": "ORG-Sensors",
+        "cr:field": [
+          {
+            "@type": "cr:Field",
+            "name": "XTrain",
+            "cr:dataType": "cr:Tensor"
+          },
+          {
+            "@type": "cr:Field",
+            "name": "YTrain",
+            "cr:dataType": "cr:Tensor"
+          },
+          {
+            "@type": "cr:Field",
+            "name": "XTest",
+            "cr:dataType": "cr:Tensor"
+          },
+          {
+            "@type": "cr:Field",
+            "name": "YTest",
+            "cr:dataType": "cr:Tensor"
+          }
+        ],
+        "cr:fileObject": {
+          "@type": "cr:FileObject",
+          "name": "ORG subset",
+          "cr:location": "exp_engine/library-datasets/v1/org-subset/**"
+        }
+      }
+    },
+    "hf:model": [
+      {
+        "algorithm": "TrainModelNN",
+        "parameter": "epochs",
+        "parameter_value": 2
+      },
+      {
+        "algorithm": "TrainModelNN",
+        "parameter": "batch_size",
+        "parameter_value": 64
+      },
+      {
+        "algorithm": "TrainModelRNN",
+        "parameter": "epochs",
+        "parameter_value": 2
+      },
+      {
+        "algorithm": "TrainModelRNN",
+        "parameter": "batch_size",
+        "parameter_value": 32
+      }
+    ]
+  },
+  "ex:evaluation": {
+    "evaluationId": "eval_001",
+    "hf:model-index": [
+      {
+        "name": "TrainModelNN",
+        "results": [
+          {
+            "task": {
+              "type": "classification",
+              "name": "Predictive Maintenance"
+            },
+            "dataset": {
+              "name": "ORG subset",
+              "type": "structured",
+              "split": "train/test"
+            },
+            "metrics": [
+              {
+                "type": "accuracy",
+                "value": 0.5
+              },
+              {
+                "type": "recall",
+                "value": 1.0
+              },
+              {
+                "type": "loss",
+                "value": 65.13
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "TrainModelRNN",
+        "results": [
+          {
+            "task": {
+              "type": "classification",
+              "name": "Predictive Maintenance"
+            },
+            "dataset": {
+              "name": "ORG subset",
+              "type": "structured",
+              "split": "train/test"
+            },
+            "metrics": [
+              {
+                "type": "accuracy",
+                "value": 0.5
+              },
+              {
+                "type": "recall",
+                "value": 1.0
+              },
+              {
+                "type": "loss",
+                "value": 30.31
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "ex:lessonsLearnt": {
+    "lessons_learnt_id": "LL_001",
+    "lessons_learnt": "Manual tuning had no significant impact beyond batch size 64.",
+    "experiment_rating": 6,
+    "run_rating": [
+      6,
+      3
+    ]
+  }
+}
