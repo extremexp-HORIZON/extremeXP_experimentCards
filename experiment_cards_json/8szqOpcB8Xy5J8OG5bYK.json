@@ -1,0 +1,297 @@
+{
+    "experimentCard": {
+        "experimentInfo": {
+            "experimentId": "8szqOpcB8Xy5J8OG5bYK",
+            "experimentName": "uc4_minimal_pipeline",
+            "intent": "Classification",
+            "constraints": [
+                {
+                    "id": "ConstraintXX",
+                    "on": "SVM",
+                    "isHard": true,
+                    "how": "Use"
+                }
+            ],
+            "requirements": [
+                {
+                    "id": "RequirementXX",
+                    "metric": "Accuracy",
+                    "method": "CrossValidation",
+                    "objective": "Maximize"
+                }
+            ],
+            "experimentStartDate": [
+                "2025-06-04T15:29:24Z"
+            ],
+            "experimentEndDate": [
+                "2025-06-04T15:29:35Z"
+            ],
+            "status": "completed",
+            "collaborators": [],
+            "userInteraction": []
+        },
+        "variabilityPoints": {
+            "dataSet": {
+                "id_dataset": null,
+                "name": null,
+                "zenoh_key_expr": null,
+                "reviewer_score": null,
+                "path": null
+            },
+            "model": {
+                "algorithm": [],
+                "parameters": {},
+                "modelJSON": {
+                    "package": {
+                        "name": null,
+                        "components": [
+                            {
+                                "workflow": {
+                                    "name": "uc4_minimal_pipeline",
+                                    "tasks": [],
+                                    "data": [],
+                                    "operators": [],
+                                    "dataConfigs": [],
+                                    "taskConfigs": [],
+                                    "nodeLinks": [
+                                        {
+                                            "started": true,
+                                            "nodes": [
+                                                {
+                                                    "name": null
+                                                },
+                                                {
+                                                    "name": null
+                                                }
+                                            ],
+                                            "ended": true
+                                        }
+                                    ],
+                                    "dataLinks": [],
+                                    "metrics": [],
+                                    "conditionalLinks": []
+                                },
+                                "assembledWorkflow": null,
+                                "experiment": null
+                            },
+                            {
+                                "workflow": null,
+                                "assembledWorkflow": {
+                                    "name": "uc4_minimal_pipeline_assembled",
+                                    "parentWorkflow": {
+                                        "name": "uc4_minimal_pipeline",
+                                        "tasks": [],
+                                        "data": [],
+                                        "operators": [],
+                                        "dataConfigs": [],
+                                        "taskConfigs": [],
+                                        "nodeLinks": [
+                                            {
+                                                "started": true,
+                                                "nodes": [
+                                                    {
+                                                        "name": null
+                                                    },
+                                                    {
+                                                        "name": null
+                                                    }
+                                                ],
+                                                "ended": true
+                                            }
+                                        ],
+                                        "dataLinks": [],
+                                        "metrics": [],
+                                        "conditionalLinks": []
+                                    },
+                                    "taskConfigs": []
+                                },
+                                "experiment": null
+                            },
+                            {
+                                "workflow": null,
+                                "assembledWorkflow": null,
+                                "experiment": {
+                                    "name": "UC4MinimalExperiment",
+                                    "intent": null,
+                                    "control": {
+                                        "expLink": [
+                                            {
+                                                "started": true,
+                                                "nodes": [
+                                                    {
+                                                        "name": "MinimalSpace",
+                                                        "assembled_workflow": {
+                                                            "name": "uc4_minimal_pipeline_assembled",
+                                                            "parentWorkflow": {
+                                                                "name": "uc4_minimal_pipeline",
+                                                                "tasks": [],
+                                                                "data": [],
+                                                                "operators": [],
+                                                                "dataConfigs": [],
+                                                                "taskConfigs": [],
+                                                                "nodeLinks": [
+                                                                    {
+                                                                        "started": true,
+                                                                        "nodes": [
+                                                                            {
+                                                                                "name": null
+                                                                            },
+                                                                            {
+                                                                                "name": null
+                                                                            }
+                                                                        ],
+                                                                        "ended": true
+                                                                    }
+                                                                ],
+                                                                "dataLinks": [],
+                                                                "metrics": [],
+                                                                "conditionalLinks": []
+                                                            },
+                                                            "taskConfigs": []
+                                                        },
+                                                        "strategy_name": {
+                                                            "runs": 0
+                                                        },
+                                                        "params": [],
+                                                        "tasks": []
+                                                    }
+                                                ],
+                                                "ended": true
+                                            }
+                                        ]
+                                    },
+                                    "spaces": [
+                                        {
+                                            "name": "MinimalSpace",
+                                            "assembled_workflow": {
+                                                "name": "uc4_minimal_pipeline_assembled",
+                                                "parentWorkflow": {
+                                                    "name": "uc4_minimal_pipeline",
+                                                    "tasks": [],
+                                                    "data": [],
+                                                    "operators": [],
+                                                    "dataConfigs": [],
+                                                    "taskConfigs": [],
+                                                    "nodeLinks": [
+                                                        {
+                                                            "started": true,
+                                                            "nodes": [
+                                                                {
+                                                                    "name": null
+                                                                },
+                                                                {
+                                                                    "name": null
+                                                                }
+                                                            ],
+                                                            "ended": true
+                                                        }
+                                                    ],
+                                                    "dataLinks": [],
+                                                    "metrics": [],
+                                                    "conditionalLinks": []
+                                                },
+                                                "taskConfigs": []
+                                            },
+                                            "strategy_name": {
+                                                "runs": 0
+                                            },
+                                            "params": [],
+                                            "tasks": []
+                                        }
+                                    ],
+                                    "events": []
+                                }
+                            }
+                        ]
+                    },
+                    "task": null
+                }
+            },
+            "processing": {
+                "workflow": [
+                    {
+                        "workflowId": "NMzqOpcB8Xy5J8OG57cz",
+                        "tasks": [
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "ValidateInput"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "metadata": {
+                                            "name_in_experiment": "UserId"
+                                        },
+                                        "name": "UserId",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "metadata": {
+                                            "name_in_experiment": "ValidatedLocations"
+                                        },
+                                        "name": "ValidatedLocations",
+                                        "uri": ""
+                                    }
+                                ],
+                                "name": "UC4ValidateInput",
+                                "start": "2025-06-04T15:29:28Z",
+                                "id": "UC4ValidateInput",
+                                "source_code": "tasks/UC4/improved_mode_detection/ValidateInput/task.py",
+                                "input_datasets": [
+                                    {
+                                        "metadata": {
+                                            "name_in_experiment": "LocationDataSingleDayUser"
+                                        },
+                                        "name": "LocationDataSingleDayUser",
+                                        "uri": "datasets/UC4/RawTraces/Giannis/Giannis015.json"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "type": "custom",
+                                    "prototypical_name": "DummyProcessTask"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "metadata": {
+                                            "name_in_experiment": "FinalUC4Message"
+                                        },
+                                        "name": "ProcessingMessage",
+                                        "uri": "datasets/UC4/uc4_minimal_test/final_message.txt"
+                                    }
+                                ],
+                                "name": "UC4DummyProcess",
+                                "start": "2025-06-04T15:29:31Z",
+                                "id": "UC4DummyProcess",
+                                "source_code": "tasks/UC4/dummy_tasks/DummyProcess/task.py",
+                                "input_datasets": [
+                                    {
+                                        "metadata": {
+                                            "name_in_experiment": "InputUserID"
+                                        },
+                                        "name": "InputUserID",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "metadata": {
+                                            "name_in_experiment": "InputLocations"
+                                        },
+                                        "name": "InputLocations",
+                                        "uri": ""
+                                    }
+                                ]
+                            }
+                        ],
+                        "status": "completed"
+                    }
+                ],
+                "features": []
+            }
+        },
+        "evaluation": {
+            "runMetrics": [],
+            "metrics": []
+        }
+    }
+}

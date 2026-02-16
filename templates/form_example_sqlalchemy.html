@@ -14,33 +14,45 @@
         <!-- Form Section -->
         <form method="POST" action="/query_experiments_page" class="row g-3 mb-4">
             <div class="col-md-4">
+                <label for="experiment_id" class="form-label">Experiment ID</label>
+                <input type="text" class="form-control" id="experiment_id" name="experiment_id" placeholder="Experiment ID" value="{{ filters.get('experiment_id', '') }}">
+            </div>
+            <div class="col-md-4">
                 <label for="experiment_name" class="form-label">Experiment Name</label>
-                <input type="text" class="form-control" id="experiment_name" name="experiment_name" placeholder="Experiment Name">
+                <input type="text" class="form-control" id="experiment_name" name="experiment_name" placeholder="Experiment Name" value="{{ filters.get('experiment_name', '') }}">
             </div>
             <div class="col-md-4">
                 <label for="intent" class="form-label">Intent</label>
                 <select id="intent" name="intent" class="form-select">
-                    <option value="">--Select Intent--</option>
-                    <option value="classification">Classification</option>
-                    <option value="regression">Regression</option>
-                    <option value="clustering">Clustering</option>
+                    <option value="" {% if not filters.get('intent') %}selected{% endif %}>--Select Intent--</option>
+                    <option value="classification" {% if filters.get('intent') == 'classification' %}selected{% endif %}>Classification</option>
+                    <option value="regression" {% if filters.get('intent') == 'regression' %}selected{% endif %}>Regression</option>
+                    <option value="clustering" {% if filters.get('intent') == 'clustering' %}selected{% endif %}>Clustering</option>
                 </select>
             </div>
             <div class="col-md-4">
                 <label for="start_date" class="form-label">Start Date</label>
-                <input type="date" class="form-control" id="start_date" name="start_date">
+                <input type="date" class="form-control" id="start_date" name="start_date" value="{{ filters.get('start_date', '') }}">
             </div>
             <div class="col-md-4">
                 <label for="end_date" class="form-label">End Date</label>
-                <input type="date" class="form-control" id="end_date" name="end_date">
+                <input type="date" class="form-control" id="end_date" name="end_date" value="{{ filters.get('end_date', '') }}">
             </div>
             <div class="col-md-4">
                 <label for="algorithm" class="form-label">Algorithm</label>
-                <input type="text" class="form-control" id="algorithm" name="algorithm" placeholder="Algorithm">
+                <input type="text" class="form-control" id="algorithm" name="algorithm" placeholder="Algorithm" value="{{ filters.get('algorithm', '') }}">
             </div>
             <div class="col-md-4">
                 <label for="metric_name" class="form-label">Metric Name</label>
-                <input type="text" class="form-control" id="metric_name" name="metric_name" placeholder="Metric Name">
+                <input type="text" class="form-control" id="metric_name" name="metric_name" placeholder="Metric Name" value="{{ filters.get('metric_name', '') }}">
+            </div>
+            <div class="col-md-4">
+                <label for="per_page" class="form-label">Results per page</label>
+                <select id="per_page" name="per_page" class="form-select">
+                    {% for option in [10, 20, 50, 100] %}
+                        <option value="{{ option }}" {% if per_page == option %}selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-primary">Search</button>
@@ -96,63 +108,88 @@
                     <th>User Rating</th>
                     <th>Collaborators</th>
                     <th>Status</th>
+                    <th>Experiment Cards</th>
                     <th>More Details</th>
+                    <th>Submit Lessons</th>
                 </tr>
             </thead>
             <tbody>
-                {% for group in results %}
+                {% for exp in results %}
                 <tr>
-                    <td>{{ group[0].experiment_id }}</td>
-                    <td>{{ group[0].experiment_name }}</td>
-                    <td>{{ group[0].experiment_start }}</td>
-                    <td>{{ group[0].experiment_end }}</td>
-                    <td>{{ group[0].intent }}</td>
-                    <td>{{ group[0].lessons_learnt }}</td>
-                    <td>{{ group[0].dataset_name }}</td>
+                    <td>{{ exp.experiment_id }}</td>
+                    <td>{{ exp.experiment_name }}</td>
+                    <td>{{ exp.experiment_start }}</td>
+                    <td>{{ exp.experiment_end }}</td>
+                    <td>{{ exp.intent }}</td>
+                    <td>{{ exp.lessons_learnt }}</td>
+                    <td>{{ exp.dataset_name }}</td>
                     <td>
-                        {% if group[0].experiment_rating is not none %}
-                            {% for i in range(group[0].experiment_rating) %}
-                                <span class="text-warning">&#9733;</span> <!-- Filled star -->
+                        {% if exp.experiment_rating is not none %}
+                            {% for i in range(exp.experiment_rating) %}
+                                <span class="text-warning">&#9733;</span>
                             {% endfor %}
-                            {% for i in range(7 - group[0].experiment_rating) %}
-                                <span class="text-secondary">&#9734;</span> <!-- Empty star -->
+                            {% for i in range(7 - exp.experiment_rating) %}
+                                <span class="text-secondary">&#9734;</span>
                             {% endfor %}
                         {% else %}
                             <span class="text-muted">No rating available</span>
                         {% endif %}
                     </td>
                     <td>
-                        {% if group[0].collaborators %}
-                            {{ group[0].collaborators | join(', ') }}
+                        {% if exp.collaborators %}
+                            {{ exp.collaborators | join(', ') }}
                         {% else %}
                             N/A
                         {% endif %}
                     </td>
-                    <td>{{ group[0].status }}</td>
+                    <td>{{ exp.status }}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#details-{{ group[0].experiment_id }}" aria-expanded="false" aria-controls="details-{{ group[0].experiment_id }}">
+                        <button type="button" class="btn btn-info btn-sm view-details-btn" data-experiment-id="{{ exp.experiment_id }}">
+                            View Card
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#details-{{ exp.experiment_id }}" aria-expanded="false" aria-controls="details-{{ exp.experiment_id }}">
                             View Details
                         </button>
                     </td>
+                    <td>
+                        {% set has_lessons = exp.lessons_learnt %}
+                        <button
+                            class="btn btn-sm btn-success submit-lessons-btn"
+                            type="button"
+                            data-experiment-id="{{ exp.experiment_id }}"
+                            {% if has_lessons %}
+                                disabled
+                                title="Lessons already submitted"
+                            {% endif %}
+                        >
+                            Submit Lessons Learnt
+                        </button>
+                    </td>
                 </tr>
-                <tr class="collapse" id="details-{{ group[0].experiment_id }}">
-                    <td colspan="11">
+                <tr class="collapse" id="details-{{ exp.experiment_id }}">
+                    <td colspan="12">
                         <table class="table table-sm">
                             <thead>
                                 <tr>
-                                    <th>Algorithm</th>
                                     <th>Metric Name</th>
                                     <th>Metric Value</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for row in group %}
-                                <tr>
-                                    <td>{{ row.algorithm }}</td>
-                                    <td>{{ row.metric_name }}</td>
-                                    <td>{{ row.metric_value }}</td>
-                                </tr>
-                                {% endfor %}
+                                {% if exp.metrics %}
+                                    {% for metric in exp.metrics %}
+                                        <tr>
+                                            <td>{{ metric.name or metric.metric_id }}</td>
+                                            <td>{{ metric.value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2" class="text-muted">No metrics available</td>
+                                    </tr>
+                                {% endif %}
                             </tbody>
                         </table>
                     </td>
@@ -160,7 +197,191 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        {% if pagination.pages > 1 %}
+        <nav aria-label="Experiment pagination">
+            <ul class="pagination">
+                <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                    {% if pagination.has_prev %}
+                    <a class="page-link" href="{{ build_pagination_url(pagination.prev_num) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                    {% else %}
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                    {% endif %}
+                </li>
+                {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="{{ build_pagination_url(page_num) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                    {% if pagination.has_next %}
+                    <a class="page-link" href="{{ build_pagination_url(pagination.next_num) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                    {% else %}
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
     </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Experiment Card</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-content-placeholder">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="lessonsModal" tabindex="-1" aria-labelledby="lessonsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="lessonsModalLabel">Submit Lessons Learnt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="lessons-modal-content">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const SCROLL_KEY = 'queryPageScroll';
+            const savedScroll = sessionStorage.getItem(SCROLL_KEY);
+            if (savedScroll) {
+                const scrollValue = parseInt(savedScroll, 10);
+                if (!Number.isNaN(scrollValue)) {
+                    window.scrollTo(0, scrollValue);
+                }
+                sessionStorage.removeItem(SCROLL_KEY);
+            }
+
+            let shouldRefreshAfterLessons = false;
+            let lastScrollPosition = 0;
+
+            $('.view-details-btn').on('click', function () {
+                const experimentId = $(this).data('experiment-id');
+                const modalContentPlaceholder = $('#modal-content-placeholder');
+
+                // Clear previous content and show loading message
+                modalContentPlaceholder.html('<p>Loading...</p>');
+
+                // Load content dynamically
+                $.get(`/experiment_details_realData/${experimentId}`, function (data) {
+                    modalContentPlaceholder.html(data);
+                });
+
+                // Show the modal
+                $('#detailsModal').modal('show');
+            });
+
+            $('.submit-lessons-btn').on('click', function () {
+                const experimentId = $(this).data('experiment-id');
+                const lessonsModalContent = $('#lessons-modal-content');
+                lastScrollPosition = window.scrollY || window.pageYOffset || 0;
+
+                lessonsModalContent.html('<p>Loading...</p>');
+
+                $.get(`/form_lessons_learnt/${experimentId}`, function (data) {
+                    lessonsModalContent.html(data);
+                    const alertBox = lessonsModalContent.find('.lessons-alert');
+                    if (alertBox.length) {
+                        alertBox.addClass('d-none').removeClass('alert-success alert-danger').text('');
+                    }
+                    lessonsModalContent.find('.lessons-form-fields').removeClass('d-none');
+                });
+
+                $('#lessonsModal').modal('show');
+            });
+
+            $(document).on('submit', '.lessons-form', function (event) {
+                event.preventDefault();
+                const form = $(this)[0];
+                const $form = $(this);
+                const formData = new FormData(form);
+                const alertBox = $form.find('.lessons-alert');
+                const fieldsWrapper = $form.find('.lessons-form-fields');
+
+                if (alertBox.length) {
+                    alertBox.addClass('d-none').removeClass('alert-success alert-danger').text('');
+                }
+                if (fieldsWrapper.length) {
+                    fieldsWrapper.removeClass('d-none');
+                }
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (response) {
+                        if (alertBox.length) {
+                            alertBox
+                                .removeClass('d-none alert-danger')
+                                .addClass('alert-success')
+                                .text(response.message || 'Metrics submitted successfully.');
+                        }
+                        form.reset();
+                        $form.find('.is-valid, .is-invalid').removeClass('is-valid is-invalid');
+                        if (fieldsWrapper.length) {
+                            fieldsWrapper.addClass('d-none');
+                        }
+                        shouldRefreshAfterLessons = true;
+                        lastScrollPosition = window.scrollY || window.pageYOffset || 0;
+                    },
+                    error: function (xhr) {
+                        const errorMessage = (xhr.responseJSON && xhr.responseJSON.message) || 'An unexpected error occurred.';
+                        if (alertBox.length) {
+                            alertBox
+                                .removeClass('d-none alert-success')
+                                .addClass('alert-danger')
+                                .text(errorMessage);
+                        }
+                    }
+                });
+            });
+
+            $('#lessonsModal').on('hidden.bs.modal', function () {
+                if (shouldRefreshAfterLessons) {
+                    sessionStorage.setItem(SCROLL_KEY, lastScrollPosition);
+                    shouldRefreshAfterLessons = false;
+                    window.location.reload();
+                }
+            });
+        });
+    </script>
+    
 </body>
 </html>

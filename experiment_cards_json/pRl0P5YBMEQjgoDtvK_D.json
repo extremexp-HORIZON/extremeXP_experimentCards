@@ -1,0 +1,880 @@
+{
+    "experimentCard": {
+        "experimentInfo": {
+            "experimentId": "pRl0P5YBMEQjgoDtvK_D",
+            "experimentName": "Panos",
+            "intent": "Classification",
+            "constraints": [
+                {
+                    "id": "ConstraintXX",
+                    "on": "SVM",
+                    "isHard": true,
+                    "how": "Use"
+                }
+            ],
+            "requirements": [
+                {
+                    "id": "RequirementXX",
+                    "metric": "Accuracy",
+                    "method": "CrossValidation",
+                    "objective": "Maximize"
+                }
+            ],
+            "experimentStartDate": [
+                "2025-04-17T00:00:00Z",
+                "2025-04-17T00:00:00Z",
+                "2025-04-17T00:00:00Z",
+                "2025-04-17T00:00:00Z",
+                "2025-04-17T00:00:00Z"
+            ],
+            "experimentEndDate": [
+                "2025-04-17T12:00:00Z",
+                "2025-04-17T12:00:00Z",
+                "2025-04-17T12:00:00Z",
+                "2025-04-17T12:00:00Z",
+                "2025-04-17T12:00:00Z"
+            ],
+            "status": "completed",
+            "collaborators": [],
+            "userInteraction": [
+                {
+                    "stoppedByUser": "NA"
+                }
+            ]
+        },
+        "variabilityPoints": {
+            "dataSet": {
+                "id_dataset": "exp_engine/library-datasets/v1/ideko-subset/**",
+                "name": null,
+                "zenoh_key_expr": null,
+                "reviewer_score": null,
+                "path": "exp_engine/library-datasets/v1/ideko-subset/**"
+            },
+            "model": {
+                "algorithm": [
+                    "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                    "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                    "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                    "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                    "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py"
+                ],
+                "parameters": {
+                    "phkPQ5YBMEQjgoDtoq_M": [
+                        {
+                            "name": "epochs",
+                            "type": "integer",
+                            "value": "3"
+                        },
+                        {
+                            "name": "batch_size",
+                            "type": "integer",
+                            "value": "64"
+                        }
+                    ],
+                    "pxkfQ5YBMEQjgoDtha9X": [
+                        {
+                            "name": "epochs",
+                            "type": "integer",
+                            "value": "3"
+                        },
+                        {
+                            "name": "batch_size",
+                            "type": "integer",
+                            "value": "64"
+                        }
+                    ],
+                    "qBkhQ5YBMEQjgoDtsq-t": [
+                        {
+                            "name": "epochs",
+                            "type": "integer",
+                            "value": "3"
+                        },
+                        {
+                            "name": "batch_size",
+                            "type": "integer",
+                            "value": "64"
+                        }
+                    ],
+                    "qRkuQ5YBMEQjgoDtJq-w": [
+                        {
+                            "name": "epochs",
+                            "type": "integer",
+                            "value": "3"
+                        },
+                        {
+                            "name": "batch_size",
+                            "type": "integer",
+                            "value": "64"
+                        }
+                    ],
+                    "qhk8Q5YBMEQjgoDtH6_U": [
+                        {
+                            "name": "epochs",
+                            "type": "integer",
+                            "value": "6"
+                        },
+                        {
+                            "name": "batch_size",
+                            "type": "integer",
+                            "value": "128"
+                        }
+                    ]
+                },
+                "modelJSON": {
+                    "package": {
+                        "name": "example",
+                        "components": [
+                            {
+                                "workflow": {
+                                    "name": "A",
+                                    "tasks": [],
+                                    "data": [],
+                                    "operators": [],
+                                    "dataConfigs": [],
+                                    "taskConfigs": [],
+                                    "nodeLinks": [],
+                                    "dataLinks": [],
+                                    "metrics": [],
+                                    "conditionalLinks": []
+                                },
+                                "assembledWorkflow": null,
+                                "experiment": null
+                            }
+                        ]
+                    },
+                    "task": null
+                }
+            },
+            "processing": {
+                "workflow": [
+                    {
+                        "workflowId": "phkPQ5YBMEQjgoDtoq_M",
+                        "tasks": [
+                            {
+                                "metadata": {
+                                    "prototypical_name": "ReadData"
+                                },
+                                "name": "ReadData",
+                                "start": "2024-11-10T09:31:31Z",
+                                "end": "2024-11-10T09:31:40Z",
+                                "id": "ReadData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/ReadData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "ExternalDataFile",
+                                        "uri": "exp_engine/library-datasets/v1/ideko-subset/**"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "AddPadding"
+                                },
+                                "name": "AddPadding",
+                                "start": "2024-11-10T09:31:40Z",
+                                "end": "2024-11-10T09:31:48Z",
+                                "id": "AddPadding",
+                                "source_code": "exp_engine/library-tasks/IDEKO/AddPadding/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "X2",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "SplitData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "Timestamps42",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    }
+                                ],
+                                "name": "SplitData",
+                                "start": "2024-11-10T09:31:49Z",
+                                "end": "2024-11-10T09:31:56Z",
+                                "id": "SplitData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/SplitData/task.py"
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "TrainModelNN"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "TrainedModelFolder",
+                                        "uri": "exp_engine/library-datasets/output/trained_model/**"
+                                    }
+                                ],
+                                "name": "TrainModel",
+                                "start": "2024-11-10T09:31:56Z",
+                                "end": "2024-11-10T09:32:11Z",
+                                "id": "TrainModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                                "parameters": [
+                                    {
+                                        "name": "epochs",
+                                        "type": "integer",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "name": "batch_size",
+                                        "type": "integer",
+                                        "value": "64"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "EvaluateModel"
+                                },
+                                "name": "EvaluateModel",
+                                "start": "2024-11-10T09:32:13Z",
+                                "end": "2024-11-10T09:32:21Z",
+                                "id": "EvaluateModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/EvaluateModel/task.py"
+                            }
+                        ],
+                        "status": "scheduled"
+                    },
+                    {
+                        "workflowId": "pxkfQ5YBMEQjgoDtha9X",
+                        "tasks": [
+                            {
+                                "metadata": {
+                                    "prototypical_name": "ReadData"
+                                },
+                                "name": "ReadData",
+                                "start": "2024-11-10T09:31:31Z",
+                                "end": "2024-11-10T09:31:40Z",
+                                "id": "ReadData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/ReadData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "ExternalDataFile",
+                                        "uri": "exp_engine/library-datasets/v1/ideko-subset/**"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "AddPadding"
+                                },
+                                "name": "AddPadding",
+                                "start": "2024-11-10T09:31:40Z",
+                                "end": "2024-11-10T09:31:48Z",
+                                "id": "AddPadding",
+                                "source_code": "exp_engine/library-tasks/IDEKO/AddPadding/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "X2",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "SplitData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "Timestamps42",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    }
+                                ],
+                                "name": "SplitData",
+                                "start": "2024-11-10T09:31:49Z",
+                                "end": "2024-11-10T09:31:56Z",
+                                "id": "SplitData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/SplitData/task.py"
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "TrainModelNN"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "TrainedModelFolder",
+                                        "uri": "exp_engine/library-datasets/output/trained_model/**"
+                                    }
+                                ],
+                                "name": "TrainModel",
+                                "start": "2024-11-10T09:31:56Z",
+                                "end": "2024-11-10T09:32:11Z",
+                                "id": "TrainModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                                "parameters": [
+                                    {
+                                        "name": "epochs",
+                                        "type": "integer",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "name": "batch_size",
+                                        "type": "integer",
+                                        "value": "64"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "EvaluateModel"
+                                },
+                                "name": "EvaluateModel",
+                                "start": "2024-11-10T09:32:13Z",
+                                "end": "2024-11-10T09:32:21Z",
+                                "id": "EvaluateModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/EvaluateModel/task.py"
+                            }
+                        ],
+                        "status": "completed"
+                    },
+                    {
+                        "workflowId": "qBkhQ5YBMEQjgoDtsq-t",
+                        "tasks": [
+                            {
+                                "metadata": {
+                                    "prototypical_name": "ReadData"
+                                },
+                                "name": "ReadData",
+                                "start": "2024-11-10T09:31:31Z",
+                                "end": "2024-11-10T09:31:40Z",
+                                "id": "ReadData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/ReadData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "ExternalDataFile",
+                                        "uri": "exp_engine/library-datasets/v1/ideko-subset/**"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "AddPadding"
+                                },
+                                "name": "AddPadding",
+                                "start": "2024-11-10T09:31:40Z",
+                                "end": "2024-11-10T09:31:48Z",
+                                "id": "AddPadding",
+                                "source_code": "exp_engine/library-tasks/IDEKO/AddPadding/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "X2",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "SplitData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "Timestamps42",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    }
+                                ],
+                                "name": "SplitData",
+                                "start": "2024-11-10T09:31:49Z",
+                                "end": "2024-11-10T09:31:56Z",
+                                "id": "SplitData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/SplitData/task.py"
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "TrainModelNN"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "TrainedModelFolder",
+                                        "uri": "exp_engine/library-datasets/output/trained_model/**"
+                                    }
+                                ],
+                                "name": "TrainModel",
+                                "start": "2024-11-10T09:31:56Z",
+                                "end": "2024-11-10T09:32:11Z",
+                                "id": "TrainModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                                "parameters": [
+                                    {
+                                        "name": "epochs",
+                                        "type": "integer",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "name": "batch_size",
+                                        "type": "integer",
+                                        "value": "64"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "EvaluateModel"
+                                },
+                                "name": "EvaluateModel",
+                                "start": "2024-11-10T09:32:13Z",
+                                "end": "2024-11-10T09:32:21Z",
+                                "id": "EvaluateModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/EvaluateModel/task.py"
+                            }
+                        ],
+                        "status": "scheduled"
+                    },
+                    {
+                        "workflowId": "qRkuQ5YBMEQjgoDtJq-w",
+                        "tasks": [
+                            {
+                                "metadata": {
+                                    "prototypical_name": "ReadData"
+                                },
+                                "name": "ReadData",
+                                "start": "2024-11-10T09:31:31Z",
+                                "end": "2024-11-10T09:31:40Z",
+                                "id": "ReadData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/ReadData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "ExternalDataFile",
+                                        "uri": "exp_engine/library-datasets/v1/ideko-subset/**"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "AddPadding"
+                                },
+                                "name": "AddPadding",
+                                "start": "2024-11-10T09:31:40Z",
+                                "end": "2024-11-10T09:31:48Z",
+                                "id": "AddPadding",
+                                "source_code": "exp_engine/library-tasks/IDEKO/AddPadding/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "X2",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "SplitData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "Timestamps42",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    }
+                                ],
+                                "name": "SplitData",
+                                "start": "2024-11-10T09:31:49Z",
+                                "id": "SplitData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/SplitData/task.py"
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "TrainModelNN"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "TrainedModelFolder",
+                                        "uri": "exp_engine/library-datasets/output/trained_model/**"
+                                    }
+                                ],
+                                "name": "TrainModel",
+                                "start": "2024-11-10T09:31:56Z",
+                                "end": "2024-11-10T09:32:11Z",
+                                "id": "TrainModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                                "parameters": [
+                                    {
+                                        "name": "epochs",
+                                        "type": "integer",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "name": "batch_size",
+                                        "type": "integer",
+                                        "value": "64"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "EvaluateModel"
+                                },
+                                "name": "EvaluateModel",
+                                "start": "2024-11-10T09:32:13Z",
+                                "end": "2024-11-10T09:32:21Z",
+                                "id": "EvaluateModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/EvaluateModel/task.py"
+                            }
+                        ],
+                        "status": "completed"
+                    },
+                    {
+                        "workflowId": "qhk8Q5YBMEQjgoDtH6_U",
+                        "tasks": [
+                            {
+                                "metadata": {
+                                    "prototypical_name": "ReadData"
+                                },
+                                "name": "ReadData",
+                                "start": "2024-11-10T09:31:31Z",
+                                "end": "2024-11-10T09:31:40Z",
+                                "id": "ReadData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/ReadData/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "ExternalDataFile",
+                                        "uri": "exp_engine/library-datasets/v1/ideko-subset/**"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "AddPadding"
+                                },
+                                "name": "AddPadding",
+                                "start": "2024-11-10T09:31:40Z",
+                                "end": "2024-11-10T09:31:48Z",
+                                "id": "AddPadding",
+                                "source_code": "exp_engine/library-tasks/IDEKO/AddPadding/task.py",
+                                "input_datasets": [
+                                    {
+                                        "name": "X2",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Y",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "IndicatorList",
+                                        "uri": ""
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "SplitData"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "Timestamps42",
+                                        "uri": "/I2Cat_phising/dataset/I2Cat_phising_dataset.csv"
+                                    },
+                                    {
+                                        "name": "Features",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    },
+                                    {
+                                        "name": "XTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTrain",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YTest",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "XPad",
+                                        "uri": ""
+                                    },
+                                    {
+                                        "name": "YPad",
+                                        "uri": "/I2Cat_phising/dataset/airports.csv"
+                                    }
+                                ],
+                                "name": "SplitData",
+                                "start": "2024-11-10T09:31:49Z",
+                                "id": "SplitData",
+                                "source_code": "exp_engine/library-tasks/IDEKO/SplitData/task.py"
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "TrainModelNN"
+                                },
+                                "output_datasets": [
+                                    {
+                                        "name": "TrainedModelFolder",
+                                        "uri": "exp_engine/library-datasets/output/trained_model/**"
+                                    }
+                                ],
+                                "name": "TrainModel",
+                                "start": "2024-11-10T09:31:56Z",
+                                "end": "2024-11-10T09:32:11Z",
+                                "id": "TrainModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/TrainModelNN/task.py",
+                                "parameters": [
+                                    {
+                                        "name": "epochs",
+                                        "type": "integer",
+                                        "value": "6"
+                                    },
+                                    {
+                                        "name": "batch_size",
+                                        "type": "integer",
+                                        "value": "128"
+                                    }
+                                ]
+                            },
+                            {
+                                "metadata": {
+                                    "prototypical_name": "EvaluateModel"
+                                },
+                                "name": "EvaluateModel",
+                                "start": "2024-11-10T09:32:13Z",
+                                "end": "2024-11-10T09:32:21Z",
+                                "id": "EvaluateModel",
+                                "source_code": "exp_engine/library-tasks/IDEKO/EvaluateModel/task.py"
+                            }
+                        ],
+                        "status": "completed"
+                    }
+                ],
+                "features": []
+            }
+        },
+        "evaluation": {
+            "runMetrics": [
+                {
+                    "metricId": "mDVrpZYBc0POvO1cBb1k",
+                    "name": "rating",
+                    "semantic_type": null,
+                    "type": null,
+                    "records": "0",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "mTVrpZYBc0POvO1cCb0n",
+                    "name": "rating",
+                    "semantic_type": null,
+                    "type": null,
+                    "records": "2",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "mjVrpZYBc0POvO1cD72q",
+                    "name": "rating",
+                    "semantic_type": null,
+                    "type": null,
+                    "records": "0",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "mzVrpZYBc0POvO1cE708",
+                    "name": "rating",
+                    "semantic_type": null,
+                    "type": null,
+                    "records": "3",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "qxk8Q5YBMEQjgoDtH6_1",
+                    "name": "Testing Accuracy",
+                    "semantic_type": null,
+                    "type": "single-value",
+                    "records": "0.98",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "rBk-Q5YBMEQjgoDtfK92",
+                    "name": "CPU Load",
+                    "semantic_type": "cpuLoad",
+                    "type": "double",
+                    "records": "{'3','2','5'}",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "rRlBQ5YBMEQjgoDteq8r",
+                    "name": "CPU Load",
+                    "semantic_type": null,
+                    "type": "double",
+                    "records": "2",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "rhlBQ5YBMEQjgoDthq-U",
+                    "name": "CPU Load",
+                    "semantic_type": null,
+                    "type": "double",
+                    "records": "2",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "rxlFQ5YBMEQjgoDtQ69C",
+                    "name": "CPU Load",
+                    "semantic_type": null,
+                    "type": "double",
+                    "records": "9",
+                    "aggregation": {}
+                },
+                {
+                    "metricId": "lzVqpZYBc0POvO1c-b2N",
+                    "name": "rating",
+                    "semantic_type": null,
+                    "type": null,
+                    "records": "1",
+                    "aggregation": {}
+                }
+            ],
+            "metrics": [
+                "cpuLoad"
+            ]
+        }
+    }
+}

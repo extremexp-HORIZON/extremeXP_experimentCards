@@ -1,0 +1,382 @@
+{
+    "experimentCard": {
+        "experimentInfo": {
+            "experimentId": "ukyS55YBpHPS2GeIZSSY",
+            "experimentName": "I2CAT_workflow1_Explainability",
+            "intent": "Classification",
+            "constraints": [
+                {
+                    "id": "ConstraintXX",
+                    "on": "SVM",
+                    "isHard": true,
+                    "how": "Use"
+                }
+            ],
+            "requirements": [
+                {
+                    "id": "RequirementXX",
+                    "metric": "Accuracy",
+                    "method": "CrossValidation",
+                    "objective": "Maximize"
+                }
+            ],
+            "experimentStartDate": [],
+            "experimentEndDate": [],
+            "status": "new",
+            "collaborators": [],
+            "userInteraction": [
+                {
+                    "stoppedByUser": "NA"
+                }
+            ]
+        },
+        "variabilityPoints": {
+            "dataSet": {
+                "id_dataset": null,
+                "name": null,
+                "zenoh_key_expr": null,
+                "reviewer_score": null,
+                "path": null
+            },
+            "model": {
+                "algorithm": [],
+                "parameters": {},
+                "modelJSON": {
+                    "package": {
+                        "name": null,
+                        "components": [
+                            {
+                                "workflow": {
+                                    "name": "uc2_workflow1",
+                                    "tasks": [],
+                                    "data": [],
+                                    "operators": [],
+                                    "dataConfigs": [],
+                                    "taskConfigs": [],
+                                    "nodeLinks": [
+                                        {
+                                            "started": true,
+                                            "nodes": [
+                                                {
+                                                    "name": null
+                                                },
+                                                {
+                                                    "name": null
+                                                },
+                                                {
+                                                    "name": null
+                                                },
+                                                {
+                                                    "name": null
+                                                },
+                                                {
+                                                    "name": null
+                                                },
+                                                {
+                                                    "name": null
+                                                }
+                                            ],
+                                            "ended": true
+                                        }
+                                    ],
+                                    "dataLinks": [],
+                                    "metrics": [],
+                                    "conditionalLinks": []
+                                },
+                                "assembledWorkflow": null,
+                                "experiment": null
+                            },
+                            {
+                                "workflow": null,
+                                "assembledWorkflow": {
+                                    "name": "Assembled_uc2_workflow1",
+                                    "parentWorkflow": {
+                                        "name": "uc2_workflow1",
+                                        "tasks": [],
+                                        "data": [],
+                                        "operators": [],
+                                        "dataConfigs": [],
+                                        "taskConfigs": [],
+                                        "nodeLinks": [
+                                            {
+                                                "started": true,
+                                                "nodes": [
+                                                    {
+                                                        "name": null
+                                                    },
+                                                    {
+                                                        "name": null
+                                                    },
+                                                    {
+                                                        "name": null
+                                                    },
+                                                    {
+                                                        "name": null
+                                                    },
+                                                    {
+                                                        "name": null
+                                                    },
+                                                    {
+                                                        "name": null
+                                                    }
+                                                ],
+                                                "ended": true
+                                            }
+                                        ],
+                                        "dataLinks": [],
+                                        "metrics": [],
+                                        "conditionalLinks": []
+                                    },
+                                    "taskConfigs": []
+                                },
+                                "experiment": null
+                            },
+                            {
+                                "workflow": null,
+                                "assembledWorkflow": null,
+                                "experiment": {
+                                    "name": "uc2_workflow1_Exp",
+                                    "intent": "FindBestClassifier",
+                                    "control": {
+                                        "expLink": [
+                                            {
+                                                "started": true,
+                                                "nodes": [
+                                                    {
+                                                        "name": "S1",
+                                                        "assembled_workflow": {
+                                                            "name": "Assembled_uc2_workflow1",
+                                                            "parentWorkflow": {
+                                                                "name": "uc2_workflow1",
+                                                                "tasks": [],
+                                                                "data": [],
+                                                                "operators": [],
+                                                                "dataConfigs": [],
+                                                                "taskConfigs": [],
+                                                                "nodeLinks": [
+                                                                    {
+                                                                        "started": true,
+                                                                        "nodes": [
+                                                                            {
+                                                                                "name": null
+                                                                            },
+                                                                            {
+                                                                                "name": null
+                                                                            },
+                                                                            {
+                                                                                "name": null
+                                                                            },
+                                                                            {
+                                                                                "name": null
+                                                                            },
+                                                                            {
+                                                                                "name": null
+                                                                            },
+                                                                            {
+                                                                                "name": null
+                                                                            }
+                                                                        ],
+                                                                        "ended": true
+                                                                    }
+                                                                ],
+                                                                "dataLinks": [],
+                                                                "metrics": [],
+                                                                "conditionalLinks": []
+                                                            },
+                                                            "taskConfigs": []
+                                                        },
+                                                        "strategy_name": {
+                                                            "runs": 0
+                                                        },
+                                                        "params": [
+                                                            {
+                                                                "name": "max_depth",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "minimum": 3,
+                                                                    "maximum": 9,
+                                                                    "step": 2
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            },
+                                                            {
+                                                                "name": "n_estimators",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "minimum": 5,
+                                                                    "maximum": 11,
+                                                                    "step": 5
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            },
+                                                            {
+                                                                "name": "min_child_weight",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "minimum": 1,
+                                                                    "maximum": 3,
+                                                                    "step": 2
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            },
+                                                            {
+                                                                "name": "gamma",
+                                                                "assinged": true,
+                                                                "value": {
+                                                                    "minimum": 1,
+                                                                    "maximum": 3,
+                                                                    "step": 2
+                                                                },
+                                                                "otherParam": null,
+                                                                "set": false,
+                                                                "type": null,
+                                                                "default": null,
+                                                                "range": null
+                                                            }
+                                                        ],
+                                                        "tasks": []
+                                                    }
+                                                ],
+                                                "ended": true
+                                            }
+                                        ]
+                                    },
+                                    "spaces": [
+                                        {
+                                            "name": "S1",
+                                            "assembled_workflow": {
+                                                "name": "Assembled_uc2_workflow1",
+                                                "parentWorkflow": {
+                                                    "name": "uc2_workflow1",
+                                                    "tasks": [],
+                                                    "data": [],
+                                                    "operators": [],
+                                                    "dataConfigs": [],
+                                                    "taskConfigs": [],
+                                                    "nodeLinks": [
+                                                        {
+                                                            "started": true,
+                                                            "nodes": [
+                                                                {
+                                                                    "name": null
+                                                                },
+                                                                {
+                                                                    "name": null
+                                                                },
+                                                                {
+                                                                    "name": null
+                                                                },
+                                                                {
+                                                                    "name": null
+                                                                },
+                                                                {
+                                                                    "name": null
+                                                                },
+                                                                {
+                                                                    "name": null
+                                                                }
+                                                            ],
+                                                            "ended": true
+                                                        }
+                                                    ],
+                                                    "dataLinks": [],
+                                                    "metrics": [],
+                                                    "conditionalLinks": []
+                                                },
+                                                "taskConfigs": []
+                                            },
+                                            "strategy_name": {
+                                                "runs": 0
+                                            },
+                                            "params": [
+                                                {
+                                                    "name": "max_depth",
+                                                    "assinged": true,
+                                                    "value": {
+                                                        "minimum": 3,
+                                                        "maximum": 9,
+                                                        "step": 2
+                                                    },
+                                                    "otherParam": null,
+                                                    "set": false,
+                                                    "type": null,
+                                                    "default": null,
+                                                    "range": null
+                                                },
+                                                {
+                                                    "name": "n_estimators",
+                                                    "assinged": true,
+                                                    "value": {
+                                                        "minimum": 5,
+                                                        "maximum": 11,
+                                                        "step": 5
+                                                    },
+                                                    "otherParam": null,
+                                                    "set": false,
+                                                    "type": null,
+                                                    "default": null,
+                                                    "range": null
+                                                },
+                                                {
+                                                    "name": "min_child_weight",
+                                                    "assinged": true,
+                                                    "value": {
+                                                        "minimum": 1,
+                                                        "maximum": 3,
+                                                        "step": 2
+                                                    },
+                                                    "otherParam": null,
+                                                    "set": false,
+                                                    "type": null,
+                                                    "default": null,
+                                                    "range": null
+                                                },
+                                                {
+                                                    "name": "gamma",
+                                                    "assinged": true,
+                                                    "value": {
+                                                        "minimum": 1,
+                                                        "maximum": 3,
+                                                        "step": 2
+                                                    },
+                                                    "otherParam": null,
+                                                    "set": false,
+                                                    "type": null,
+                                                    "default": null,
+                                                    "range": null
+                                                }
+                                            ],
+                                            "tasks": []
+                                        }
+                                    ],
+                                    "events": []
+                                }
+                            }
+                        ]
+                    },
+                    "task": null
+                }
+            },
+            "processing": {
+                "workflow": [],
+                "features": []
+            }
+        },
+        "evaluation": {
+            "runMetrics": [],
+            "metrics": []
+        }
+    }
+}

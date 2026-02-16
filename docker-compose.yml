@@ -6,7 +6,7 @@ services:
     image: postgres:latest
     container_name: postgres-container
     environment:
-      POSTGRES_USER: user
+      POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_DB: experiments
     ports:
@@ -23,6 +23,8 @@ services:
     volumes:
       - .:/app  
       - ./uploads:/app/uploads  
+      - ./experiment_cards_json:/app/experiment_cards_json
+      - ./dal_files:/app/dal_files  
     environment:
      - ACCESS_TOKEN=${ACCESS_TOKEN}
      - DATABASE_URL=postgresql://user:password@postgres:5432/experiments

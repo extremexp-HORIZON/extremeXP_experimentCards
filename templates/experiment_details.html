@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            color: white;
+            font-weight: bold;
+        }
+        .card-header.general {
+            background-color: #007bff;
+        }
+        .card-header.intent {
+            background-color: #ff5733;
+        }
+        .card-header.requirements {
+            background-color: #28a745;
+        }
+        .card-header.variability {
+            background-color: #ffc107;
+        }
+        .card-header.processing {
+            background-color: #17a2b8;
+        }
+        .card-header.lessons {
+            background-color: #6f42c1;
+        }
+        .card-header.evaluation {
+            background-color: #20c997;
+        }
+        .btn-back {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Experiment Card for moby-exp1</h1>
+
+        <!-- General Information and Intent + Requirements -->
+        <div class="row">
+            <!-- General Information -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header general">General Information</div>
+                    <div class="card-body">
+                        <p><strong>Experiment Name:</strong> moby-exp1</p>
+                        <p><strong>Experiment ID:</strong> fuTt55IBLOWBshtiLyul</p>
+                        <p><strong>Start Date:</strong> {{ experiment.experiment_start }}</p>
+                        <p><strong>End Date:</strong> {{ experiment.experiment_end }}</p>
+                        <p><strong>Status:</strong> {{ experiment.status }}</p>
+                        <p><strong>Collaborators:</strong> Georgia Gkioka, Yiannis Verginadis</p>
+                        <p><strong>Constraints:</strong> {% if experiment.constraints %}
+                            <ul>
+                                {% for constraint in experiment.constraints %}
+                                    <li>
+                                        <strong>ID:</strong> ConstraintXX,
+                                        <strong>On:</strong> SVM,
+                                        <strong>Is Hard:</strong> Yes,
+                                        <strong>How:</strong> Use
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            None
+                        {% endif %}
+                        </p>
+                        <p><strong>User Interaction:</strong> {% if experiment.userInteraction %}{{ experiment.userInteraction | join(', ') }}{% else %}None{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intent and Requirements -->
+            <div class="col-md-6">
+                <!-- Intent -->
+                <div class="card mb-3">
+                    <div class="card-header intent">Intent</div>
+                    <div class="card-body">
+                        <p><strong>Intent:</strong> Classification</p>
+                    </div>
+                </div>
+
+                <!-- Requirements -->
+                <div class="card">
+                    <div class="card-header requirements">Requirements</div>
+                    <div class="card-body">
+                        {% if experiment.requirements %}
+                            <ul>
+                                {% for req in experiment.requirements %}
+                                    <li>
+                                        <strong>Metric:</strong> Accuracy,
+                                        <strong>Method:</strong> CrossValidation,
+                                        <strong>Objective:</strong> Maximize
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No requirements available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Variability Points -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header variability">Variability Points</div>
+                    <div class="card-body">
+                        <!-- Models and Datasets -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header processing">Models</div>
+                                    <div class="card-body">
+                                        {% if variabilityPoints.model %}
+                                            <ul>
+                                                <li><strong>Algorithm:</strong> SVM</li>
+                                                <li><strong>Parameter:</strong> C</li>
+                                                <li><strong>Parameter Values:</strong>0.1, 0.01, 1 </li>
+                                            </ul>
+                                        {% else %}
+                                            <p>No models available.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header processing">Datasets</div>
+                                    <div class="card-body">
+                                        {% if variabilityPoints.dataSet %}
+                                            <ul>
+                                                <li><strong>Dataset Name:</strong> InputCSV</li>
+                                                <li><strong>Dataset Path:</strong> {{ variabilityPoints.dataSet.zenoh_key_expr }}</li>
+                                                <li><strong>Reviewer Score:</strong> 78</li>
+                                            </ul>
+                                        {% else %}
+                                            <p>No datasets available.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Processing -->
+                        <div class="card mt-3">
+                            <div class="card-header processing">Processing</div>
+                            <div class="card-body">
+                                {% if variabilityPoints.processing.workflow %}
+                                    <ul>
+                                        {% for workflow in variabilityPoints.processing.workflow %}
+                                            <li><strong>Workflow ID: f-Tt55IBLOWBshtiMSu5</strong> </li>
+                                            <li><strong>Tasks:</strong>
+                                                <ul>
+                                                        <li>ReadData</li>
+                                                        <li>PreprocessData</li>
+                                                        <li>TimeBasedClustering</li>
+                                                        <li>TimeAndSpeedBasedClustering</li>
+                                                        <li>RuleBasedSegmentCombination</li>
+                                                        <li>ModeEstimation</li>
+                                                        <li>RuleBasedSegmentationCombinationUsingModes</li>
+                                                        <li>ActivityEstimation</li>
+                                                </ul>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>No processing workflows available.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lessons Learnt -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header lessons">Lessons Learnt</div>
+                    <div class="card-body">
+                        {% if lessons %}
+                            {% for lesson in lessons %}
+                                <p><strong>Lessons:</strong> The experiment went well. </p>
+                                <p><strong>Experiment Rating:</strong> {{ lesson.experiment_rating }}</p>
+                                <p><strong>Run Ratings:</strong> [6, Null, 2]</p>
+                                <p><strong>Best Performing Run:</strong> 1 </p>
+                            {% endfor %}
+                        {% else %}
+                            <p>No lessons learnt available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header evaluation">Evaluation</div>
+                    <div class="card-body">
+                        <p><strong>Metrics:</strong> ML_Accuracy, ML_Recall</p>
+                        <p><strong>Run Metrics:</strong> [0.67, 0.65], [0.5, 0.6], [0.47, 0.62]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
